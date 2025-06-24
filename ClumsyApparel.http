@@ -1,0 +1,6 @@
+@ClumsyApparel_HostAddress = http://localhost:5096
+
+GET {{ClumsyApparel_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
