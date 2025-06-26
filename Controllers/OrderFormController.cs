@@ -27,7 +27,9 @@ public class ClumsyapparelController : ControllerBase
         [FromQuery] bool? neededHelp,
         [FromQuery] bool? fulfilled,
         [FromQuery] string? sortBy,
-        [FromQuery] string? sortDirection // "asc" or "desc"
+        [FromQuery] string? sortDirection,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10
         )
     {
         IQueryable<OrderForm> query = _dbContext.OrderForms;
@@ -70,6 +72,9 @@ public class ClumsyapparelController : ControllerBase
                     break;
             }
         }
+        int totalCount = await query.CountAsync();
+
+        query = query.Skip((page - 1) * pageSize).Take(pageSize);
 
 
         List<OrderListDTO> orders = await query
@@ -87,6 +92,14 @@ public class ClumsyapparelController : ControllerBase
             })
             .ToListAsync();
 
-        return Ok(orders);
+        PageResult<OrderListDTO> result = new PageResult<OrderListDTO>
+        {
+            Data = orders,
+            TotalCount = totalCount,
+            Page = page,
+            PageSize = pageSize
+        };
+
+        return Ok(result);
     }
 }
