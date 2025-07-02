@@ -10,14 +10,9 @@ namespace clumsyapparel.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ClumsyapparelController : ControllerBase
+public class OrderFormController(clumsyapparelDbContext context) : ControllerBase
 {
-    private readonly clumsyapparelDbContext _dbContext;
-
-    public ClumsyapparelController(clumsyapparelDbContext context)
-    {
-        _dbContext = context;
-    }
+    private readonly clumsyapparelDbContext _dbContext = context;
 
     [HttpGet]
     public async Task<IActionResult> GetList(
@@ -26,8 +21,12 @@ public class ClumsyapparelController : ControllerBase
         [FromQuery] string? notes,
         [FromQuery] bool? neededHelp,
         [FromQuery] bool? fulfilled,
-        [FromQuery] string? sortBy,
-        [FromQuery] string? sortDirection,
+        [FromQuery] decimal? minPrice,
+        [FromQuery] decimal? maxPrice,
+        [FromQuery] decimal? minHours,
+        [FromQuery] decimal? maxHours,
+        [FromQuery] int? minRating,
+        [FromQuery] int? maxRating,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10
         )
@@ -56,22 +55,35 @@ public class ClumsyapparelController : ControllerBase
             query = query.Where(o => o.Fulfilled == fulfilled.Value);
         }
 
-        bool descending = sortDirection?.ToLower() == "desc";
-        if (!string.IsNullOrEmpty(sortBy))
+        if (minPrice.HasValue)
         {
-            switch (sortBy.ToLower())
-            {
-                case "price":
-                    query = descending ? query.OrderByDescending(o => o.Price) : query.OrderBy(o => o.Price);
-                    break;
-                case "hourslogged":
-                    query = descending ? query.OrderByDescending(o => o.HoursLogged) : query.OrderBy(o => o.HoursLogged);
-                    break;
-                case "rating":
-                    query = descending ? query.OrderByDescending(o => o.Rating) : query.OrderBy(o => o.Rating);
-                    break;
-            }
+            query = query.Where(o => o.Price >= minPrice.Value);
         }
+        if (maxPrice.HasValue)
+        {
+            query = query.Where(o => o.Price <= maxPrice.Value);
+        }
+
+        if (minHours.HasValue)
+        {
+            query = query.Where(o => o.HoursLogged >= minHours.Value);
+        }
+        if (maxHours.HasValue)
+        {
+            query = query.Where(o => o.HoursLogged <= maxHours.Value);
+        }
+
+        if (minRating.HasValue)
+        {
+            query = query.Where(o => o.Rating >= minRating.Value);
+        }
+        if (maxRating.HasValue)
+        {
+            query = query.Where(o => o.Rating <= maxRating.Value);
+        }
+
+        query = query.OrderBy(o => o.Id);
+
         int totalCount = await query.CountAsync();
 
         query = query.Skip((page - 1) * pageSize).Take(pageSize);
