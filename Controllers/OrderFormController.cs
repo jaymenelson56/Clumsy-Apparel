@@ -25,12 +25,32 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
         [FromQuery] decimal? maxPrice,
         [FromQuery] decimal? minHours,
         [FromQuery] decimal? maxHours,
-        [FromQuery] int? minRating,
-        [FromQuery] int? maxRating,
+        [FromQuery] int? rating,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10
         )
     {
+        if (page < 1)
+        {
+            return BadRequest("Page number must be at least 1.");
+        }
+
+        if (rating.HasValue && (rating < 1 || rating > 5))
+        {
+            return BadRequest("Rating must be between 1 and 5.");
+        }
+
+        if (minPrice.HasValue && maxPrice.HasValue && minPrice > maxPrice)
+        {
+            return BadRequest("Minimum price cannot be greater than maximum price.");
+        }
+
+        if (minHours.HasValue && maxHours.HasValue && minHours > maxHours)
+        {
+            return BadRequest("Minimum hours cannot be greater than maximum hours.");
+        }
+
+
         IQueryable<OrderForm> query = _dbContext.OrderForms;
 
         if (!string.IsNullOrEmpty(vinyl))
@@ -73,13 +93,9 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
             query = query.Where(o => o.HoursLogged <= maxHours.Value);
         }
 
-        if (minRating.HasValue)
+        if (rating.HasValue)
         {
-            query = query.Where(o => o.Rating >= minRating.Value);
-        }
-        if (maxRating.HasValue)
-        {
-            query = query.Where(o => o.Rating <= maxRating.Value);
+            query = query.Where(o => o.Rating == rating.Value);
         }
 
         query = query.OrderBy(o => o.Id);
