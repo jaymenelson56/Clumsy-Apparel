@@ -49,6 +49,9 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
         {
             return BadRequest("Minimum hours cannot be greater than maximum hours.");
         }
+        vinyl = vinyl?.Trim();
+        shirt = shirt?.Trim();
+        notes = notes?.Trim();
 
 
         IQueryable<OrderForm> query = _dbContext.OrderForms;
