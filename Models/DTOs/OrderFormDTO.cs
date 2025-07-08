@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace clumsyapparel.Models.DTOs;
 
 public class OrderFormDTO
