@@ -20,22 +20,20 @@ export default function Home() {
       </Head>
       <div className={`${styles.page}`}>
         <main className={styles.main}>
-          <Card>
+          <Card className="card-custom">
             <CardBody>
               <CardTitle tag="h1">Welcome to Clumsy Apparel Menu</CardTitle>
-              <ListGroup className="mb-3">
-                <ListGroupItem>Choose Menu Option</ListGroupItem>
-              </ListGroup>
+
 
               <div className="d-flex flex-column align-items-center justify-content-center gap-2">
                 <div>
-                  <Button color="primary">Create Form</Button>
+                  <Button className={styles.button}>Create Form</Button>
                 </div>
                 <div>
-                  <Button color="secondary">Order Forms</Button>
+                  <Button className={styles.button}>Order Forms</Button>
                 </div>
                 <div>
-                  <Button color="info">Data</Button>
+                  <Button className={styles.button}>Data</Button>
                 </div>
               </div>
             </CardBody>

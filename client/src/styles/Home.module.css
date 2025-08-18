@@ -166,3 +166,12 @@ a.secondary {
     filter: invert();
   }
 }
+.button {
+  background-color: var(--button-primary-bg) !important;
+  color: var(--button-primary-text) !important;
+  border: none !important;
+}
+
+.button:hover {
+  background-color: var(--button-primary-hover) !important;
+}
