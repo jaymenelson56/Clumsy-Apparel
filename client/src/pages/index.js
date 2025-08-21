@@ -1,12 +1,11 @@
 import Head from "next/head";
 import styles from "@/styles/Home.module.css";
+import Link from "next/link";
 import {
   Button,
   Card,
   CardBody,
   CardTitle,
-  ListGroup,
-  ListGroupItem,
 } from "reactstrap";
 
 export default function Home() {
@@ -27,13 +26,19 @@ export default function Home() {
 
               <div className="d-flex flex-column align-items-center justify-content-center gap-2">
                 <div>
-                  <Button className={styles.button}>Create Form</Button>
+                  <Link href="/create_order" passHref>
+                    <Button className={styles.button}>Create Form</Button>
+                  </Link>
                 </div>
                 <div>
-                  <Button className={styles.button}>Order Forms</Button>
+                  <Link href="/orders" passHref>
+                    <Button className={styles.button}>Order Forms</Button>
+                  </Link>
                 </div>
                 <div>
-                  <Button className={styles.button}>Data</Button>
+                  <Link href="/data" passHref>
+                    <Button className={styles.button}>Data</Button>
+                  </Link>
                 </div>
               </div>
             </CardBody>
