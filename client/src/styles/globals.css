@@ -1,12 +1,26 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  --card-bg: #f5f5f5;
+  --card-text: #171717;
+
+  --button-primary-bg: #0d6efd;
+  --button-primary-text: #ffffff;
+  --button-primary-hover: #0b5ed7;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+
+    --card-bg: #2a2a2a;
+    --card-text: #ededed;
+
+    --button-primary-bg: #375a7f;
+    --button-primary-text: #ededed;
+    --button-primary-hover: #2c4663;
   }
 }
 
@@ -35,8 +49,19 @@ a {
   text-decoration: none;
 }
 
+.card-custom { 
+  background-color: #f8f9fa;
+  color: #212529;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
   }
+  .card-custom {
+    background-color: #343a40; 
+    color: #f8f9fa; 
+  }
+
 }
