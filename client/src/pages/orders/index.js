@@ -4,6 +4,10 @@ import {
     Card,
     CardBody,
     CardTitle,
+    Form,
+    FormGroup,
+    Label,
+    Input,
 } from "reactstrap";
 
 export default function OrderList() {
@@ -20,6 +24,46 @@ export default function OrderList() {
                     <Card className="card-custom">
                         <CardBody>
                             <CardTitle tag="h1">Order List</CardTitle>
+
+                            {/* Filter Section */}
+                            <Form>
+                                <FormGroup>
+                                    <Label for="vinyl">Vinyl</Label>
+                                    <Input
+                                        id="vinylFilter"
+                                        name="vinyl"
+                                        type="text"
+                                        placeholder="Filter by vinyl type"
+                                    />
+                                </FormGroup>
+
+                                <FormGroup>
+                                    <Label for="shirt">Shirt</Label>
+                                    <Input
+                                        id="shirtFilter"
+                                        name="shirt"
+                                        type="text"
+                                        placeholder="Filter by shirt type"
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="neededHelp">Help Needed</Label>
+                                    <Input id="neededHelp" name="neededHelp" type="select">
+                                        <option value="">Does not matter</option>
+                                        <option value="yes">Yes</option>
+                                        <option value="no">No</option>
+                                    </Input>
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="fulfilled">Is it fulfilled?</Label>
+                                    <Input Id="fulfilled" name="fulfilled" type="select">
+                                        <option value="">Does not matter</option>
+                                        <option value="">Yes</option>
+                                        <option value="">No</option>
+
+                                    </Input>
+                                </FormGroup>
+                            </Form>
                         </CardBody>
                     </Card>
                 </main>
