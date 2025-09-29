@@ -4,6 +4,7 @@ import {
     Card,
     CardBody,
     CardTitle,
+    CardFooter,
     Form,
     FormGroup,
     Label,
@@ -19,6 +20,48 @@ import { useState } from "react";
 
 export default function OrderList() {
     const [isOpen, setIsOpen] = useState(false);
+    const [orders, setOrders] = useState([{
+        Id: 1,
+        VinylType: "Heat Transfer",
+        ShirtType: "Cotton Tee",
+        Price: 19.99,
+        HoursLogged: 1.5,
+        NeededHelp: false,
+        Rating: 5,
+        Notes: "Smooth process.",
+        Fulfilled: true,
+    }, {
+        Id: 2,
+        VinylType: "Heat Transfer",
+        ShirtType: "Cotton Tee",
+        Price: 19.99,
+        HoursLogged: 1.5,
+        NeededHelp: false,
+        Rating: 5,
+        Notes: "Smooth process.",
+        Fulfilled: true,
+    }, {
+        Id: 3,
+        VinylType: "Heat Transfer",
+        ShirtType: "Cotton Tee",
+        Price: 19.99,
+        HoursLogged: 1.5,
+        AmountOfErrors: 0,
+        NeededHelp: false,
+        Rating: 5,
+        Notes: "Smooth process.",
+        Fulfilled: true,
+    }, {
+        Id: 4,
+        VinylType: "Heat Transfer",
+        ShirtType: "Cotton Tee",
+        Price: 19.99,
+        HoursLogged: 1.5,
+        NeededHelp: false,
+        Rating: 5,
+        Notes: "Smooth process.",
+        Fulfilled: true,
+    }])
 
     const toggle = () => setIsOpen(!isOpen);
     return (
@@ -31,15 +74,15 @@ export default function OrderList() {
             </Head>
             <div className={`${styles.page}`}>
                 <main className={styles.main}>
-                    <Card className="card-custom" style={{ width: "900px", margin: "0 auto" }}>
+                    <Card className="card-custom">
                         <CardBody>
                             <CardTitle tag="h1" className="text-center">Order List</CardTitle>
                             <Collapse isOpen={isOpen}>
                                 <Form>
                                     <Row>
-                                        <Col md={6}>
+                                        <Col xs={12} md={6}>
                                             <FormGroup>
-                                                <Label for="vinyl">Vinyl</Label>
+                                                <Label for="vinylFilter">Vinyl</Label>
                                                 <Input
                                                     id="vinylFilter"
                                                     name="vinyl"
@@ -48,9 +91,9 @@ export default function OrderList() {
                                                 />
                                             </FormGroup>
                                         </Col>
-                                        <Col md={6}>
+                                        <Col xs={12} md={6}>
                                             <FormGroup>
-                                                <Label for="shirt">Shirt</Label>
+                                                <Label for="shirtFilter">Shirt</Label>
                                                 <Input
                                                     id="shirtFilter"
                                                     name="shirt"
@@ -62,7 +105,7 @@ export default function OrderList() {
                                     </Row>
 
                                     <Row>
-                                        <Col md={6}>
+                                        <Col xs={12} md={6}>
                                             <FormGroup>
                                                 <Label for="neededHelp">Help Needed</Label>
                                                 <Input id="neededHelp" name="neededHelp" type="select">
@@ -72,7 +115,7 @@ export default function OrderList() {
                                                 </Input>
                                             </FormGroup>
                                         </Col>
-                                        <Col md={6}>
+                                        <Col xs={12} md={6}>
                                             <FormGroup>
                                                 <Label for="fulfilled">Is it fulfilled?</Label>
                                                 <Input id="fulfilled" name="fulfilled" type="select">
@@ -85,7 +128,7 @@ export default function OrderList() {
                                     </Row>
 
                                     <Row>
-                                        <Col md={6}>
+                                        <Col xs={12} md={6}>
                                             <FormGroup>
                                                 <Label for="minPrice">Minimum Price</Label>
                                                 <Input
@@ -97,7 +140,7 @@ export default function OrderList() {
                                                 />
                                             </FormGroup>
                                         </Col>
-                                        <Col md={6}>
+                                        <Col xs={12} md={6}>
                                             <FormGroup>
                                                 <Label for="maxPrice">Maximum Price</Label>
                                                 <Input
@@ -111,7 +154,7 @@ export default function OrderList() {
                                         </Col>
                                     </Row>
                                     <Row>
-                                        <Col md={4}>
+                                        <Col xs={12} md={4}>
                                             <FormGroup>
                                                 <Label for="minHours">Minimum Hours</Label>
                                                 <Input
@@ -123,7 +166,7 @@ export default function OrderList() {
                                                 />
                                             </FormGroup>
                                         </Col>
-                                        <Col md={4}>
+                                        <Col xs={12} md={4}>
                                             <FormGroup>
                                                 <Label for="maxHours">Maximum Hours</Label>
                                                 <Input
@@ -135,7 +178,7 @@ export default function OrderList() {
                                                 />
                                             </FormGroup>
                                         </Col>
-                                        <Col md={4}>
+                                        <Col xs={12} md={4}>
                                             <FormGroup>
                                                 <Label for="rating">Rating</Label>
                                                 <Input id="rating" name="rating" type="select">
@@ -147,7 +190,7 @@ export default function OrderList() {
                                                     <option value="5">5</option>
                                                 </Input>
                                             </FormGroup>
-                                            <Button color="primary" className="mt-2 w-100">
+                                            <Button color="primary" className="w-100 w-md-auto">
                                                 Apply Filters
                                             </Button>
                                         </Col>
@@ -159,6 +202,26 @@ export default function OrderList() {
                                     {isOpen ? "Hide Filters" : "Filters"}
                                 </Button>
                             </div>
+                            <Row>
+                                {orders.map((order) => (
+                                    <Col xs={12} sm={6} md={4} key={order.Id} className="mb-4">
+                                        <Card>
+                                            <CardBody>
+                                                <CardTitle tag="h5">Order #{order.Id}</CardTitle>
+                                                <p><strong>Vinyl:</strong> {order.VinylType}</p>
+                                                <p><strong>Shirt:</strong> {order.ShirtType}</p>
+                                                <p>
+                                                    <strong>Fulfilled:</strong>{" "}
+                                                    {order.Fulfilled ? "Yes" : "No"}
+                                                </p>
+                                            </CardBody>
+                                            <CardFooter>
+                                                Rating: {order.Rating}
+                                            </CardFooter>
+                                        </Card>
+                                    </Col>
+                                ))}
+                            </Row>
                         </CardBody>
                     </Card>
                 </main>
