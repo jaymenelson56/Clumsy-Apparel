@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using clumsyapparel.Data;
@@ -11,9 +12,11 @@ using clumsyapparel.Data;
 namespace ClumsyApparel.Migrations
 {
     [DbContext(typeof(clumsyapparelDbContext))]
-    partial class clumsyapparelDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251010005621_MakeUpdatedOnNullable")]
+    partial class MakeUpdatedOnNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
