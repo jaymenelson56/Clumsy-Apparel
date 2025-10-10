@@ -11,4 +11,5 @@ public class OrderListDTO
     public int Rating { get; set; }
     public string? Notes { get; set; }
     public bool Fulfilled { get; set; }
+    public string? ImageURL { get; set; }
 }

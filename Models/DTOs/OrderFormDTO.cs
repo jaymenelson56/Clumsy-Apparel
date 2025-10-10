@@ -16,5 +16,5 @@ public class OrderFormDTO
     public string? ImageURL { get; set; }
     public bool Fulfilled { get; set; }
     public DateTime CreatedOn { get; set; }
-    public DateTime UpdatedOn { get; set; }
+    public DateTime? UpdatedOn { get; set; }
 }

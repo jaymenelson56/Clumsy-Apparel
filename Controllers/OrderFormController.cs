@@ -119,7 +119,9 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
                 NeededHelp = o.NeededHelp,
                 Rating = o.Rating,
                 Notes = o.Notes,
+                ImageURL = o.ImageURL,
                 Fulfilled = o.Fulfilled
+
             })
             .ToListAsync();
 
@@ -132,5 +134,43 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
         };
 
         return Ok(result);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        try
+        {
+            OrderForm? order = await _dbContext.OrderForms.FindAsync(id);
+
+            if (order == null)
+            {
+                return NotFound(new { Message = $"Order with ID {id} not found." });
+            }
+
+            OrderFormDTO orderDto = new()
+            {
+                Id = order.Id,
+                VinylType = order.VinylType,
+                ShirtType = order.ShirtType,
+                Price = order.Price,
+                HoursLogged = order.HoursLogged,
+                AmountOfErrors = order.AmountOfErrors,
+                NeededHelp = order.NeededHelp,
+                Rating = order.Rating,
+                Notes = order.Notes,
+                ImageURL = order.ImageURL,
+                Fulfilled = order.Fulfilled,
+                CreatedOn = order.CreatedOn,
+                UpdatedOn = order.UpdatedOn
+            };
+
+            return Ok(orderDto);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error retrieving order with ID {id}: {ex.Message}");
+            return StatusCode(500, new { Message = "An unexpected error occurred while retrieving the order." });
+        }
     }
 }
