@@ -116,8 +116,8 @@ export default function OrderList() {
                                                     onChange={handleFilterChange}
                                                 >
                                                     <option value="">Does not matter</option>
-                                                    <option value="yes">Yes</option>
-                                                    <option value="no">No</option>
+                                                    <option value="true">Yes</option>
+                                                    <option value="false">No</option>
                                                 </Input>
                                             </FormGroup>
                                         </Col>
@@ -131,8 +131,8 @@ export default function OrderList() {
                                                     onChange={handleFilterChange}
                                                 >
                                                     <option value="">Does not matter</option>
-                                                    <option value="yes">Yes</option>
-                                                    <option value="no">No</option>
+                                                    <option value="true">Yes</option>
+                                                    <option value="false">No</option>
                                                 </Input>
                                             </FormGroup>
                                         </Col>
