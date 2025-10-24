@@ -220,10 +220,6 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
             {
                 newOrder.ImageURL = request.ImageUrl;
             }
-            else
-            {
-                return BadRequest("Either an image or an image URL must be provided.");
-            }
 
             _dbContext.OrderForms.Add(newOrder);
             await _dbContext.SaveChangesAsync();
