@@ -173,4 +173,84 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
             return StatusCode(500, new { Message = "An unexpected error occurred while retrieving the order." });
         }
     }
+    [HttpPost]
+    public async Task<IActionResult> CreateOrderForm([FromForm] CreateOrderRequest request)
+    {
+        try
+        {
+            if (request.Rating < 1 || request.Rating > 5)
+            {
+                return BadRequest("Rating must be between 1 and 5.");
+            }
+
+            OrderForm newOrder = new OrderForm
+            {
+                VinylType = request.VinylType.Trim(),
+                ShirtType = request.ShirtType.Trim(),
+                Price = request.Price,
+                HoursLogged = request.HoursLogged,
+                AmountOfErrors = request.AmountOfErrors,
+                NeededHelp = request.NeededHelp,
+                Rating = request.Rating,
+                Notes = string.IsNullOrWhiteSpace(request.Notes) ? null : request.Notes.Trim(),
+                Fulfilled = request.Fulfilled,
+                CreatedOn = DateTime.UtcNow,
+                UpdatedOn = null
+            };
+
+            if (request.Image != null && request.Image.Length > 0)
+            {
+                string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "client", "public", "uploads");
+
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                string filePath = Path.Combine(uploadsFolder, request.Image.FileName);
+
+                using (FileStream stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await request.Image.CopyToAsync(stream);
+                }
+
+                newOrder.ImageURL = $"/uploads/{request.Image.FileName}";
+            }
+            else if (!string.IsNullOrEmpty(request.ImageUrl))
+            {
+                newOrder.ImageURL = request.ImageUrl;
+            }
+            else
+            {
+                return BadRequest("Either an image or an image URL must be provided.");
+            }
+
+            _dbContext.OrderForms.Add(newOrder);
+            await _dbContext.SaveChangesAsync();
+
+            OrderFormDTO createdDto = new OrderFormDTO
+            {
+                Id = newOrder.Id,
+                VinylType = newOrder.VinylType,
+                ShirtType = newOrder.ShirtType,
+                Price = newOrder.Price,
+                HoursLogged = newOrder.HoursLogged,
+                AmountOfErrors = newOrder.AmountOfErrors,
+                NeededHelp = newOrder.NeededHelp,
+                Rating = newOrder.Rating,
+                Notes = newOrder.Notes,
+                ImageURL = newOrder.ImageURL,
+                Fulfilled = newOrder.Fulfilled,
+                CreatedOn = newOrder.CreatedOn,
+                UpdatedOn = newOrder.UpdatedOn
+            };
+
+            return CreatedAtAction(nameof(GetById), new { id = newOrder.Id }, createdDto);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error creating order: {ex.Message}");
+            return StatusCode(500, new { Message = "An unexpected error occurred while creating the order." });
+        }
+    }
 }
