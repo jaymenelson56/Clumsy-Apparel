@@ -249,4 +249,89 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
             return StatusCode(500, new { Message = "An unexpected error occurred while creating the order." });
         }
     }
+
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> UpdateOrderForm(int id, [FromForm] UpdateOrderRequest request)
+    {
+        OrderForm? existingOrder = await _dbContext.OrderForms.FindAsync(id);
+
+        if (existingOrder == null)
+        {
+            return NotFound(new { Message = $"Order with ID {id} not found." });
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.VinylType))
+        {
+            existingOrder.VinylType = request.VinylType.Trim();
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.ShirtType))
+        {
+            existingOrder.ShirtType = request.ShirtType.Trim();
+        }
+
+        if (request.Price.HasValue)
+        {
+            existingOrder.Price = request.Price.Value;
+        }
+
+        if (request.HoursLogged.HasValue)
+        {
+            existingOrder.HoursLogged = request.HoursLogged.Value;
+        }
+
+        if (request.AmountOfErrors.HasValue)
+        {
+            existingOrder.AmountOfErrors = request.AmountOfErrors.Value;
+        }
+
+        if (request.NeededHelp.HasValue)
+        {
+            existingOrder.NeededHelp = request.NeededHelp.Value;
+        }
+
+        if (request.Rating.HasValue)
+        {
+            existingOrder.Rating = request.Rating.Value;
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.Notes))
+        {
+            existingOrder.Notes = request.Notes.Trim();
+        }
+
+        if (request.Fulfilled.HasValue)
+        {
+            existingOrder.Fulfilled = request.Fulfilled.Value;
+        }
+
+        if (request.Image != null && request.Image.Length > 0)
+        {
+            string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "client", "public", "uploads");
+
+            if (!Directory.Exists(uploadsFolder))
+            {
+                Directory.CreateDirectory(uploadsFolder);
+            }
+
+            string filePath = Path.Combine(uploadsFolder, request.Image.FileName);
+
+            using (FileStream stream = new FileStream(filePath, FileMode.Create))
+            {
+                await request.Image.CopyToAsync(stream);
+            }
+
+            existingOrder.ImageURL = $"/uploads/{request.Image.FileName}";
+        }
+        else if (!string.IsNullOrEmpty(request.ImageUrl))
+        {
+            existingOrder.ImageURL = request.ImageUrl;
+        }
+
+        existingOrder.UpdatedOn = DateTime.UtcNow;
+
+        await _dbContext.SaveChangesAsync();
+
+        return Ok(new { Message = "Order updated successfully.", UpdatedOn = existingOrder.UpdatedOn });
+    }
 }
