@@ -375,4 +375,19 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
             return StatusCode(500, new { Message = "An unexpected error occurred while deleting the order." });
         }
     }
+    [HttpGet("summary")]
+    public async Task<IActionResult> GetSummary()
+    {
+        SummaryDTO? summary = await _dbContext.OrderForms
+            .GroupBy(o => 1)
+            .Select(g => new SummaryDTO
+            {
+                TotalHours = g.Sum(o => o.HoursLogged),
+                AverageRating = g.Average(o => (double)o.Rating),
+                FulfilledRevenue = g.Where(o => o.Fulfilled).Sum(o => o.Price)
+            })
+            .FirstOrDefaultAsync();
+
+        return Ok(summary ?? new SummaryDTO());
+    }
 }
