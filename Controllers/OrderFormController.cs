@@ -334,4 +334,45 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
 
         return Ok(new { Message = "Order updated successfully.", UpdatedOn = existingOrder.UpdatedOn });
     }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteOrderForm(int id)
+    {
+        try
+        {
+            // Look up the order
+            OrderForm? order = await _dbContext.OrderForms.FindAsync(id);
+
+            if (order == null)
+            {
+                return NotFound(new { Message = $"Order with ID {id} not found." });
+            }
+
+            // Optionally delete the uploaded image from disk if it exists
+            if (!string.IsNullOrEmpty(order.ImageURL))
+            {
+                string imagePath = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "client",
+                    "public",
+                    order.ImageURL.TrimStart('/')
+                );
+
+                if (System.IO.File.Exists(imagePath))
+                {
+                    System.IO.File.Delete(imagePath);
+                }
+            }
+
+            _dbContext.OrderForms.Remove(order);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(new { Message = $"Order with ID {id} deleted successfully." });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error deleting order {id}: {ex.Message}");
+            return StatusCode(500, new { Message = "An unexpected error occurred while deleting the order." });
+        }
+    }
 }
