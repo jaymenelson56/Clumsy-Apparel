@@ -25,5 +25,5 @@ public class CreateOrderRequest
     
     public bool Fulfilled { get; set; }
     public IFormFile? Image { get; set; }
-    public string? ImageUrl { get; set; }
+    public string? ImageURL { get; set; }
 }

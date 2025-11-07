@@ -216,9 +216,9 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
 
                 newOrder.ImageURL = $"/uploads/{request.Image.FileName}";
             }
-            else if (!string.IsNullOrEmpty(request.ImageUrl))
+            else if (!string.IsNullOrEmpty(request.ImageURL))
             {
-                newOrder.ImageURL = request.ImageUrl;
+                newOrder.ImageURL = request.ImageURL;
             }
 
             _dbContext.OrderForms.Add(newOrder);
@@ -323,9 +323,9 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
 
             existingOrder.ImageURL = $"/uploads/{request.Image.FileName}";
         }
-        else if (!string.IsNullOrEmpty(request.ImageUrl))
+        else if (!string.IsNullOrEmpty(request.ImageURL))
         {
-            existingOrder.ImageURL = request.ImageUrl;
+            existingOrder.ImageURL = request.ImageURL;
         }
 
         existingOrder.UpdatedOn = DateTime.UtcNow;

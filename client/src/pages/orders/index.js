@@ -34,14 +34,17 @@ export default function OrderList() {
         maxHours: "",
         rating: "",
     });
+    const [isFiltered, setIsFiltered] = useState(false);
 
     const toggle = () => setIsOpen(!isOpen);
+
 
     useEffect(() => {
         async function loadOrders() {
             try {
                 const result = await getOrders();
                 setOrders(result.data);
+                setIsFiltered(false);
             } catch (err) {
                 console.error(err);
             }
@@ -57,6 +60,7 @@ export default function OrderList() {
         try {
             const result = await getOrders(filters);
             setOrders(result.data);
+            setIsFiltered(Object.values(filters).some(v => v !== ""));
         } catch (err) {
             console.error(err);
         }
@@ -233,6 +237,13 @@ export default function OrderList() {
                                     {isOpen ? "Hide Filters" : "Filters"}
                                 </Button>
                             </div>
+                            {isFiltered && (
+                                <div className="text-center">
+                                    <span className={styles.filterIndicator}>
+                                        Showing filtered results
+                                    </span>
+                                </div>
+                            )}
                             <Row>
                                 {orders.length === 0 ? (
                                     <Col>
