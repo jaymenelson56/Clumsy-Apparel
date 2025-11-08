@@ -27,7 +27,7 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
         [FromQuery] decimal? maxHours,
         [FromQuery] int? rating,
         [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 10
+        [FromQuery] int pageSize = 12
         )
     {
         if (page < 1)

@@ -35,6 +35,11 @@ export default function OrderList() {
         rating: "",
     });
     const [isFiltered, setIsFiltered] = useState(false);
+    const [pagination, setPagination] = useState({
+        page: 1,
+        pageSize: 12,
+        totalCount: 0
+    });
 
     const toggle = () => setIsOpen(!isOpen);
 
@@ -42,8 +47,9 @@ export default function OrderList() {
     useEffect(() => {
         async function loadOrders() {
             try {
-                const result = await getOrders();
+                const result = await getOrders({ page: 1, pageSize: 12 });
                 setOrders(result.data);
+                setPagination({ page: 1, pageSize: 12, totalCount: result.totalCount });
                 setIsFiltered(false);
             } catch (err) {
                 console.error(err);
@@ -56,10 +62,11 @@ export default function OrderList() {
         setFilters((prev) => ({ ...prev, [name]: value }));
     };
 
-    const applyFilters = async () => {
+    const applyFilters = async (page = 1) => {
         try {
-            const result = await getOrders(filters);
+            const result = await getOrders({ ...filters, page, pageSize: pagination.pageSize });
             setOrders(result.data);
+            setPagination({ ...pagination, page, totalCount: result.totalCount });
             setIsFiltered(Object.values(filters).some(v => v !== ""));
         } catch (err) {
             console.error(err);
@@ -223,7 +230,7 @@ export default function OrderList() {
                                             <Button
                                                 color="primary"
                                                 className="w-100 w-md-auto"
-                                                onClick={applyFilters}
+                                                onClick={() => applyFilters(1)}
                                                 type="button"
                                             >
                                                 Apply Filters
@@ -279,6 +286,23 @@ export default function OrderList() {
                                             </Card>
                                         </Col>
                                     )))}
+                                <Col xs={12} className="d-flex justify-content-center gap-2 mt-3">
+                                    <Button
+                                        disabled={pagination.page === 1}
+                                        onClick={() => applyFilters(pagination.page - 1)}
+                                    >
+                                        Previous
+                                    </Button>
+                                    <span className="align-self-center">
+                                        Page {pagination.page} of {Math.ceil(pagination.totalCount / pagination.pageSize)}
+                                    </span>
+                                    <Button
+                                        disabled={pagination.page >= Math.ceil(pagination.totalCount / pagination.pageSize)}
+                                        onClick={() => applyFilters(pagination.page + 1)}
+                                    >
+                                        Next
+                                    </Button>
+                                </Col>
                             </Row>
                         </CardBody>
                     </Card>
