@@ -4,7 +4,7 @@ export async function getOrders(filters = {}) {
   try {
     const {
       page = 1,
-      pageSize = 12,
+      pageSize = 9,
       ...otherFilters
     } = filters;
 

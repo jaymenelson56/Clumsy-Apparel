@@ -13,10 +13,15 @@ import {
     Col,
     Button,
     Collapse,
-    CardImg
+    CardImg,
+    Spinner,
+    Pagination,
+    PaginationItem,
+    PaginationLink
 } from "reactstrap";
 import { useEffect, useState } from "react";
 import { getOrders } from "../api/orderListData";
+
 
 
 
@@ -37,9 +42,10 @@ export default function OrderList() {
     const [isFiltered, setIsFiltered] = useState(false);
     const [pagination, setPagination] = useState({
         page: 1,
-        pageSize: 12,
+        pageSize: 9,
         totalCount: 0
     });
+    const [isLoading, setIsLoading] = useState(true);
 
     const toggle = () => setIsOpen(!isOpen);
 
@@ -47,12 +53,15 @@ export default function OrderList() {
     useEffect(() => {
         async function loadOrders() {
             try {
-                const result = await getOrders({ page: 1, pageSize: 12 });
+                setIsLoading(true);
+                const result = await getOrders({ page: 1, pageSize: 9 });
                 setOrders(result.data);
-                setPagination({ page: 1, pageSize: 12, totalCount: result.totalCount });
+                setPagination({ page: 1, pageSize: 9, totalCount: result.totalCount });
                 setIsFiltered(false);
             } catch (err) {
                 console.error(err);
+            } finally {
+                setIsLoading(false);
             }
         }
         loadOrders();
@@ -64,12 +73,15 @@ export default function OrderList() {
 
     const applyFilters = async (page = 1) => {
         try {
+            setIsLoading(true);
             const result = await getOrders({ ...filters, page, pageSize: pagination.pageSize });
             setOrders(result.data);
             setPagination({ ...pagination, page, totalCount: result.totalCount });
             setIsFiltered(Object.values(filters).some(v => v !== ""));
         } catch (err) {
             console.error(err);
+        } finally {
+            setIsLoading(false);
         }
     };
     return (
@@ -251,8 +263,15 @@ export default function OrderList() {
                                     </span>
                                 </div>
                             )}
+                            <div className="text-center my-3">
+                                <p>Total Results: {pagination.totalCount}</p>
+                            </div>
                             <Row>
-                                {orders.length === 0 ? (
+                                {isLoading ? (
+                                    <Col className="text-center mt-5">
+                                        <Spinner color="primary" type="grow">Loading...</Spinner>
+                                    </Col>
+                                ) : orders.length === 0 ? (
                                     <Col>
                                         <p className="text-center mt-3">No orders found</p>
                                     </Col>
@@ -281,27 +300,54 @@ export default function OrderList() {
                                                     </p>
                                                 </CardBody>
                                                 <CardFooter>
-                                                    Rating: {order.rating}
+                                                    Date Created: {new Date(order.createdOn).toLocaleDateString()}
                                                 </CardFooter>
                                             </Card>
                                         </Col>
                                     )))}
                                 <Col xs={12} className="d-flex justify-content-center gap-2 mt-3">
-                                    <Button
-                                        disabled={pagination.page === 1}
-                                        onClick={() => applyFilters(pagination.page - 1)}
-                                    >
-                                        Previous
-                                    </Button>
-                                    <span className="align-self-center">
-                                        Page {pagination.page} of {Math.ceil(pagination.totalCount / pagination.pageSize)}
-                                    </span>
-                                    <Button
-                                        disabled={pagination.page >= Math.ceil(pagination.totalCount / pagination.pageSize)}
-                                        onClick={() => applyFilters(pagination.page + 1)}
-                                    >
-                                        Next
-                                    </Button>
+                                    <Pagination>
+                                        <PaginationItem disabled={pagination.page === 1}>
+                                            <PaginationLink previous onClick={() => applyFilters(pagination.page - 1)} />
+                                        </PaginationItem>
+
+                                        {(() => {
+                                            const totalPages = Math.ceil(pagination.totalCount / pagination.pageSize);
+                                            const pages = [];
+
+                                            if (totalPages <= 6) {
+                                                // Show all pages if 6 or fewer
+                                                for (let i = 1; i <= totalPages; i++) {
+                                                    pages.push(i);
+                                                }
+                                            } else {
+                                                // Show first 6 pages, then last page
+                                                for (let i = 1; i <= 6; i++) {
+                                                    pages.push(i);
+                                                }
+                                                pages.push('...');
+                                                pages.push(totalPages);
+                                            }
+
+                                            return pages.map((pageNum, index) =>
+                                                pageNum === '...' ? (
+                                                    <PaginationItem disabled key="ellipsis">
+                                                        <PaginationLink>...</PaginationLink>
+                                                    </PaginationItem>
+                                                ) : (
+                                                    <PaginationItem active={pageNum === pagination.page} key={pageNum}>
+                                                        <PaginationLink onClick={() => applyFilters(pageNum)}>
+                                                            {pageNum}
+                                                        </PaginationLink>
+                                                    </PaginationItem>
+                                                )
+                                            );
+                                        })()}
+
+                                        <PaginationItem disabled={pagination.page >= Math.ceil(pagination.totalCount / pagination.pageSize)}>
+                                            <PaginationLink next onClick={() => applyFilters(pagination.page + 1)} />
+                                        </PaginationItem>
+                                    </Pagination>
                                 </Col>
                             </Row>
                         </CardBody>
