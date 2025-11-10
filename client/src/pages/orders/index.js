@@ -12,10 +12,16 @@ import {
     Row,
     Col,
     Button,
-    Collapse
+    Collapse,
+    CardImg,
+    Spinner,
+    Pagination,
+    PaginationItem,
+    PaginationLink
 } from "reactstrap";
 import { useEffect, useState } from "react";
 import { getOrders } from "../api/orderListData";
+
 
 
 
@@ -33,16 +39,29 @@ export default function OrderList() {
         maxHours: "",
         rating: "",
     });
+    const [isFiltered, setIsFiltered] = useState(false);
+    const [pagination, setPagination] = useState({
+        page: 1,
+        pageSize: 9,
+        totalCount: 0
+    });
+    const [isLoading, setIsLoading] = useState(true);
 
     const toggle = () => setIsOpen(!isOpen);
+
 
     useEffect(() => {
         async function loadOrders() {
             try {
-                const result = await getOrders();
+                setIsLoading(true);
+                const result = await getOrders({ page: 1, pageSize: 9 });
                 setOrders(result.data);
+                setPagination({ page: 1, pageSize: 9, totalCount: result.totalCount });
+                setIsFiltered(false);
             } catch (err) {
                 console.error(err);
+            } finally {
+                setIsLoading(false);
             }
         }
         loadOrders();
@@ -52,12 +71,17 @@ export default function OrderList() {
         setFilters((prev) => ({ ...prev, [name]: value }));
     };
 
-    const applyFilters = async () => {
+    const applyFilters = async (page = 1) => {
         try {
-            const result = await getOrders(filters);
+            setIsLoading(true);
+            const result = await getOrders({ ...filters, page, pageSize: pagination.pageSize });
             setOrders(result.data);
+            setPagination({ ...pagination, page, totalCount: result.totalCount });
+            setIsFiltered(Object.values(filters).some(v => v !== ""));
         } catch (err) {
             console.error(err);
+        } finally {
+            setIsLoading(false);
         }
     };
     return (
@@ -218,7 +242,7 @@ export default function OrderList() {
                                             <Button
                                                 color="primary"
                                                 className="w-100 w-md-auto"
-                                                onClick={applyFilters}
+                                                onClick={() => applyFilters(1)}
                                                 type="button"
                                             >
                                                 Apply Filters
@@ -232,15 +256,40 @@ export default function OrderList() {
                                     {isOpen ? "Hide Filters" : "Filters"}
                                 </Button>
                             </div>
+                            {isFiltered && (
+                                <div className="text-center">
+                                    <span className={styles.filterIndicator}>
+                                        Showing filtered results
+                                    </span>
+                                </div>
+                            )}
+                            <div className="text-center my-3">
+                                <p>Total Results: {pagination.totalCount}</p>
+                            </div>
                             <Row>
-                                {orders.length === 0 ? (
+                                {isLoading ? (
+                                    <Col className="text-center mt-5">
+                                        <Spinner color="primary" type="grow">Loading...</Spinner>
+                                    </Col>
+                                ) : orders.length === 0 ? (
                                     <Col>
                                         <p className="text-center mt-3">No orders found</p>
                                     </Col>
                                 ) : (
                                     orders.map((order) => (
-                                        <Col xs={12} sm={6} md={4} key={order.Id} className="mb-4">
+                                        <Col xs={12} sm={6} md={4} key={order.id} className="mb-4">
                                             <Card>
+                                                <CardImg
+                                                    top
+                                                    width="100%"
+                                                    src={order.imageURL || "/image-not-found.png"}
+                                                    alt={`Order ${order.id} image`}
+                                                    className="img-fluid"
+                                                    style={{ height: "200px", objectFit: "cover" }}
+                                                    onError={(e) => {
+                                                        e.currentTarget.src = "/image-not-found.png";
+                                                    }}
+                                                />
                                                 <CardBody>
                                                     <CardTitle tag="h5">Order #{order.id}</CardTitle>
                                                     <p><strong>Vinyl:</strong> {order.vinylType}</p>
@@ -251,11 +300,55 @@ export default function OrderList() {
                                                     </p>
                                                 </CardBody>
                                                 <CardFooter>
-                                                    Rating: {order.rating}
+                                                    Date Created: {new Date(order.createdOn).toLocaleDateString()}
                                                 </CardFooter>
                                             </Card>
                                         </Col>
                                     )))}
+                                <Col xs={12} className="d-flex justify-content-center gap-2 mt-3">
+                                    <Pagination>
+                                        <PaginationItem disabled={pagination.page === 1}>
+                                            <PaginationLink previous onClick={() => applyFilters(pagination.page - 1)} />
+                                        </PaginationItem>
+
+                                        {(() => {
+                                            const totalPages = Math.ceil(pagination.totalCount / pagination.pageSize);
+                                            const pages = [];
+
+                                            if (totalPages <= 6) {
+                                                // Show all pages if 6 or fewer
+                                                for (let i = 1; i <= totalPages; i++) {
+                                                    pages.push(i);
+                                                }
+                                            } else {
+                                                // Show first 6 pages, then last page
+                                                for (let i = 1; i <= 6; i++) {
+                                                    pages.push(i);
+                                                }
+                                                pages.push('...');
+                                                pages.push(totalPages);
+                                            }
+
+                                            return pages.map((pageNum, index) =>
+                                                pageNum === '...' ? (
+                                                    <PaginationItem disabled key="ellipsis">
+                                                        <PaginationLink>...</PaginationLink>
+                                                    </PaginationItem>
+                                                ) : (
+                                                    <PaginationItem active={pageNum === pagination.page} key={pageNum}>
+                                                        <PaginationLink onClick={() => applyFilters(pageNum)}>
+                                                            {pageNum}
+                                                        </PaginationLink>
+                                                    </PaginationItem>
+                                                )
+                                            );
+                                        })()}
+
+                                        <PaginationItem disabled={pagination.page >= Math.ceil(pagination.totalCount / pagination.pageSize)}>
+                                            <PaginationLink next onClick={() => applyFilters(pagination.page + 1)} />
+                                        </PaginationItem>
+                                    </Pagination>
+                                </Col>
                             </Row>
                         </CardBody>
                     </Card>

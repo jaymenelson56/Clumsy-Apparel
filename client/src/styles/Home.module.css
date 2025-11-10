@@ -175,3 +175,12 @@ a.secondary {
 .button:hover {
   background-color: var(--button-primary-hover) !important;
 }
+
+.filter-indicator {
+  background-color: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  margin: 12px 0;
+}

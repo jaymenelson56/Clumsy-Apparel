@@ -27,7 +27,7 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
         [FromQuery] decimal? maxHours,
         [FromQuery] int? rating,
         [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 10
+        [FromQuery] int pageSize = 9
         )
     {
         if (page < 1)
@@ -101,7 +101,7 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
             query = query.Where(o => o.Rating == rating.Value);
         }
 
-        query = query.OrderBy(o => o.Id);
+        query = query.OrderByDescending(o => o.CreatedOn);
 
         int totalCount = await query.CountAsync();
 
@@ -120,7 +120,8 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
                 Rating = o.Rating,
                 Notes = o.Notes,
                 ImageURL = o.ImageURL,
-                Fulfilled = o.Fulfilled
+                Fulfilled = o.Fulfilled,
+                CreatedOn = o.CreatedOn
 
             })
             .ToListAsync();
@@ -216,9 +217,9 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
 
                 newOrder.ImageURL = $"/uploads/{request.Image.FileName}";
             }
-            else if (!string.IsNullOrEmpty(request.ImageUrl))
+            else if (!string.IsNullOrEmpty(request.ImageURL))
             {
-                newOrder.ImageURL = request.ImageUrl;
+                newOrder.ImageURL = request.ImageURL;
             }
 
             _dbContext.OrderForms.Add(newOrder);
@@ -323,9 +324,9 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
 
             existingOrder.ImageURL = $"/uploads/{request.Image.FileName}";
         }
-        else if (!string.IsNullOrEmpty(request.ImageUrl))
+        else if (!string.IsNullOrEmpty(request.ImageURL))
         {
-            existingOrder.ImageURL = request.ImageUrl;
+            existingOrder.ImageURL = request.ImageURL;
         }
 
         existingOrder.UpdatedOn = DateTime.UtcNow;

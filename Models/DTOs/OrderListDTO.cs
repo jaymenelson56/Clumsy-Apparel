@@ -12,4 +12,5 @@ public class OrderListDTO
     public string? Notes { get; set; }
     public bool Fulfilled { get; set; }
     public string? ImageURL { get; set; }
+    public DateTime CreatedOn { get; set; }
 }
