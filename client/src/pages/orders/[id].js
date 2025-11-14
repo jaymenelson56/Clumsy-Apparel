@@ -47,9 +47,13 @@ export default function OrderDetails() {
             </Head>
             <div className={styles.page}>
                 <main className={styles.main}>
-                    <Card className="card-custom"> 
+                    <Card className="card-custom my-2"
+                        color="primary"
+                        outline
+                        style={{ borderWidth: '3px' }}
+                    >
                         <CardHeader>
-                            <CardTitle tag="h2">{order.vinylType} on {order.shirtType}</CardTitle>
+                            <CardTitle tag="h2">{order.id}: {order.vinylType} on {order.shirtType}</CardTitle>
                         </CardHeader>
                         <CardImg
                             top
