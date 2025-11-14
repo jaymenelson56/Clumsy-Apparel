@@ -33,3 +33,23 @@ export async function getOrders(filters = {}) {
     throw error;
   }
 }
+
+export async function getOrderById(id) {
+  try {
+    const response = await fetch(`${BASE_URL}/${id}`, {
+      method: "GET",
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null;
+      }
+      throw new Error(`Failed to fetch order: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching order:", error);
+    throw error;
+  }
+}
