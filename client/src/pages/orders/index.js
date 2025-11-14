@@ -21,8 +21,7 @@ import {
 } from "reactstrap";
 import { useEffect, useState } from "react";
 import { getOrders } from "../api/orderListData";
-
-
+import Link from "next/link";
 
 
 export default function OrderList() {
@@ -97,6 +96,9 @@ export default function OrderList() {
                     <Card className="card-custom">
                         <CardBody>
                             <CardTitle tag="h1" className="text-center">Order List</CardTitle>
+
+                            {/* Filters Here */}
+
                             <Collapse isOpen={isOpen}>
                                 <Form>
                                     <Row>
@@ -251,6 +253,9 @@ export default function OrderList() {
                                     </Row>
                                 </Form>
                             </Collapse>
+
+                            {/* End Filter Component */}
+
                             <div className="d-flex justify-content-center mt-3">
                                 <Button color="secondary" onClick={toggle} className="mb3">
                                     {isOpen ? "Hide Filters" : "Filters"}
@@ -278,31 +283,33 @@ export default function OrderList() {
                                 ) : (
                                     orders.map((order) => (
                                         <Col xs={12} sm={6} md={4} key={order.id} className="mb-4">
-                                            <Card>
-                                                <CardImg
-                                                    top
-                                                    width="100%"
-                                                    src={order.imageURL || "/image-not-found.png"}
-                                                    alt={`Order ${order.id} image`}
-                                                    className="img-fluid"
-                                                    style={{ height: "200px", objectFit: "cover" }}
-                                                    onError={(e) => {
-                                                        e.currentTarget.src = "/image-not-found.png";
-                                                    }}
-                                                />
-                                                <CardBody>
-                                                    <CardTitle tag="h5">Order #{order.id}</CardTitle>
-                                                    <p><strong>Vinyl:</strong> {order.vinylType}</p>
-                                                    <p><strong>Shirt:</strong> {order.shirtType}</p>
-                                                    <p>
-                                                        <strong>Fulfilled:</strong>{" "}
-                                                        {order.fulfilled ? "Yes" : "No"}
-                                                    </p>
-                                                </CardBody>
-                                                <CardFooter>
-                                                    Date Created: {new Date(order.createdOn).toLocaleDateString()}
-                                                </CardFooter>
-                                            </Card>
+                                            <Link href={`/orders/${order.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                                <Card>
+                                                    <CardImg
+                                                        top
+                                                        width="100%"
+                                                        src={order.imageURL || "/image-not-found.png"}
+                                                        alt={`Order ${order.id} image`}
+                                                        className="img-fluid"
+                                                        style={{ height: "200px", objectFit: "cover" }}
+                                                        onError={(e) => {
+                                                            e.currentTarget.src = "/image-not-found.png";
+                                                        }}
+                                                    />
+                                                    <CardBody>
+                                                        <CardTitle tag="h5">Order #{order.id}</CardTitle>
+                                                        <p><strong>Vinyl:</strong> {order.vinylType}</p>
+                                                        <p><strong>Shirt:</strong> {order.shirtType}</p>
+                                                        <p>
+                                                            <strong>Fulfilled:</strong>{" "}
+                                                            {order.fulfilled ? "Yes" : "No"}
+                                                        </p>
+                                                    </CardBody>
+                                                    <CardFooter>
+                                                        Date Created: {new Date(order.createdOn).toLocaleDateString()}
+                                                    </CardFooter>
+                                                </Card>
+                                            </Link>
                                         </Col>
                                     )))}
                                 <Col xs={12} className="d-flex justify-content-center gap-2 mt-3">
