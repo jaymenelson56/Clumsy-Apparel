@@ -83,6 +83,24 @@ export default function OrderList() {
             setIsLoading(false);
         }
     };
+    if (isLoading) {
+        return (
+            <>
+                <Head>
+                    <title>Clumsy Apparel</title>
+                </Head>
+                <div className={styles.page}>
+                    <main className={styles.main}>
+                        <Col className="text-center mt-5">
+                            <Spinner color="primary" type="grow">Loading...</Spinner>
+                            <Spinner color="primary" type="grow">Loading...</Spinner>
+                            <Spinner color="primary" type="grow">Loading...</Spinner>
+                        </Col>
+                    </main>
+                </div>
+            </>
+        )
+    }
     return (
         <>
             <Head>
@@ -272,11 +290,7 @@ export default function OrderList() {
                                 <p>Total Results: {pagination.totalCount}</p>
                             </div>
                             <Row>
-                                {isLoading ? (
-                                    <Col className="text-center mt-5">
-                                        <Spinner color="primary" type="grow">Loading...</Spinner>
-                                    </Col>
-                                ) : orders.length === 0 ? (
+                                {orders.length === 0 ? (
                                     <Col>
                                         <p className="text-center mt-3">No orders found</p>
                                     </Col>

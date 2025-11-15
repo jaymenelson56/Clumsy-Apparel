@@ -10,6 +10,8 @@ import {
     CardImg,
     ListGroup,
     ListGroupItem,
+    Col,
+    Spinner,
 } from "reactstrap";
 import Head from "next/head";
 import { getOrderById } from "../api/orderListData";
@@ -36,7 +38,22 @@ export default function OrderDetails() {
             .finally(() => setLoading(false));
     }, [id]);
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return (
+        <>
+            <Head>
+                <title>Clumsy Apparel</title>
+            </Head>
+            <div className={styles.page}>
+                <main className={styles.main}>
+                    <Col className="text-center mt-5">
+                        <Spinner color="primary" type="grow">Loading...</Spinner>
+                        <Spinner color="primary" type="grow">Loading...</Spinner>
+                        <Spinner color="primary" type="grow">Loading...</Spinner>
+                    </Col>
+                </main>
+            </div>
+        </>
+    )
     if (error) return <div>Error: {error}</div>;
     if (!order) return <div>Order not found</div>;
 

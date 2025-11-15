@@ -53,3 +53,55 @@ export async function getOrderById(id) {
     throw error;
   }
 }
+export async function updateOrder(id, data) {
+  try {
+    const formData = new FormData();
+    
+    // Only append fields that exist
+    if (data.vinylType) formData.append("VinylType", data.vinylType);
+    if (data.shirtType) formData.append("ShirtType", data.shirtType);
+    if (data.price !== undefined) formData.append("Price", data.price);
+    if (data.hoursLogged !== undefined) formData.append("HoursLogged", data.hoursLogged);
+    if (data.amountOfErrors !== undefined) formData.append("AmountOfErrors", data.amountOfErrors);
+    if (data.neededHelp !== undefined) formData.append("NeededHelp", data.neededHelp);
+    if (data.rating !== undefined) formData.append("Rating", data.rating);
+    if (data.notes) formData.append("Notes", data.notes);
+    if (data.fulfilled !== undefined) formData.append("Fulfilled", data.fulfilled);
+    if (data.image) formData.append("Image", data.image); // File object
+    if (data.imageURL) formData.append("ImageURL", data.imageURL);
+
+    const response = await fetch(`${BASE_URL}/${id}`, {
+      method: "PATCH",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to update order: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error updating order:", error);
+    throw error;
+  }
+}
+
+export async function deleteOrder(id) {
+  try {
+    const response = await fetch(`${BASE_URL}/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null;
+      }
+      throw new Error(`Failed to delete order: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error deleting order:", error);
+    throw error;
+  }
+}
