@@ -88,7 +88,7 @@ export default function OrderDetails() {
                                 <ListGroupItem><strong>Price:</strong> ${order.price}</ListGroupItem>
                                 <ListGroupItem><strong>Hours Worked:</strong> {order.hoursLogged}</ListGroupItem>
                                 <ListGroupItem><strong>Number of Errors:</strong> {order.amountOfErrors}</ListGroupItem>
-                                <ListGroupItem><strong>Help Required:</strong> {order.neededHelp ? "Yes" : "No"}</ListGroupItem>
+                                <ListGroupItem><strong>Help Needed:</strong> {order.neededHelp ? "Yes" : "No"}</ListGroupItem>
                                 <ListGroupItem><strong>Rating:</strong> {order.rating}/5</ListGroupItem>
                                 {order.notes && <ListGroupItem><strong>Notes:</strong> {order.notes}</ListGroupItem>}
                                 <ListGroupItem><strong>Fulfilled:</strong> {order.fulfilled ? "Yes" : "No"}</ListGroupItem>
