@@ -12,6 +12,10 @@ import {
     ListGroupItem,
     Col,
     Spinner,
+    Dropdown,
+    DropdownToggle,
+    DropdownMenu,
+    DropdownItem
 } from "reactstrap";
 import Head from "next/head";
 import { getOrderById } from "../api/orderListData";
@@ -22,6 +26,9 @@ export default function OrderDetails() {
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [openDD, setOpenDD] = useState(false);
+
+    const toggleDD = () => setOpenDD(!openDD)
 
     useEffect(() => {
         if (!id) return;
@@ -69,8 +76,22 @@ export default function OrderDetails() {
                         outline
                         style={{ borderWidth: '3px' }}
                     >
-                        <CardHeader>
+                        <CardHeader className="d-flex justify-content-between align-items-center gap-3">
                             <CardTitle tag="h2">{order.id}: {order.vinylType} on {order.shirtType}</CardTitle>
+                            <Dropdown isOpen={openDD} toggle={toggleDD}>
+                                <DropdownToggle tag="span" className="p-0" style={{ cursor: 'pointer', fontSize: '1.5rem' }}>
+                                    ⋮
+                                </DropdownToggle>
+                                <DropdownMenu end>
+                                    <DropdownItem onClick={() => router.push(`/orders/${id}/edit`)}>
+                                        Edit
+                                    </DropdownItem>
+                                    <DropdownItem divider />
+                                    <DropdownItem className="text-danger">
+                                        Delete
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
                         </CardHeader>
                         <CardImg
                             top
