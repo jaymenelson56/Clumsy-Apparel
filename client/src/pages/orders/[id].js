@@ -15,10 +15,15 @@ import {
     Dropdown,
     DropdownToggle,
     DropdownMenu,
-    DropdownItem
+    DropdownItem,
+    Modal,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    Button
 } from "reactstrap";
 import Head from "next/head";
-import { getOrderById } from "../api/orderListData";
+import { deleteOrder, getOrderById } from "../api/orderListData";
 
 export default function OrderDetails() {
     const router = useRouter();
@@ -27,6 +32,9 @@ export default function OrderDetails() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [openDD, setOpenDD] = useState(false);
+    const [deleteModal, setDeleteModal] = useState(false);
+    const [successModal, setSuccessModal] = useState(false);
+    const [deleteError, setDeleteError] = useState(null);
 
     const toggleDD = () => setOpenDD(!openDD)
 
@@ -44,6 +52,19 @@ export default function OrderDetails() {
             .catch(() => setError("Failed to load order"))
             .finally(() => setLoading(false));
     }, [id]);
+
+    const handleDelete = async () => {
+        setDeleteError(null);
+        try {
+            await deleteOrder(id);
+            setDeleteModal(false);
+            setSuccessModal(true);
+        } catch (err) {
+            console.error(err);
+            setDeleteError("Failed to delete order. Please try again.");
+            setDeleteModal(false);
+        }
+    };
 
     if (loading) return (
         <>
@@ -69,6 +90,30 @@ export default function OrderDetails() {
             <Head>
                 <title>{order.vinylType} - Clumsy Apparel</title>
             </Head>
+            <Modal isOpen={deleteModal} toggle={() => setDeleteModal(false)}>
+                <ModalHeader>Confirm Delete</ModalHeader>
+                <ModalBody>Are you sure you want to delete order number {order.id}? Once Deleted it cannot be retrieved.</ModalBody>
+                <ModalFooter>
+                    <Button color="danger" onClick={handleDelete}>Delete</Button>
+                    <Button color="secondary" onClick={() => setDeleteModal(false)}>Cancel</Button>
+                </ModalFooter>
+            </Modal>
+            <Modal isOpen={successModal} toggle={() => setSuccessModal(false)}>
+                <ModalHeader>Success</ModalHeader>
+                <ModalBody>Order Deleted Successfully</ModalBody>
+                <ModalFooter>
+                    <Button color="primary" onClick={() => router.push('/orders')}>Ok</Button>
+                </ModalFooter>
+            </Modal>
+            {deleteError && (
+                <Modal isOpen={!!deleteError} toggle={() => setDeleteError(null)}>
+                    <ModalHeader>Error</ModalHeader>
+                    <ModalBody className="text-danger">{deleteError}</ModalBody>
+                    <ModalFooter>
+                        <Button color="secondary" onClick={() => setDeleteError(null)}>Close</Button>
+                    </ModalFooter>
+                </Modal>
+            )}
             <div className={styles.page}>
                 <main className={styles.main}>
                     <Card className="card-custom my-2"
@@ -87,7 +132,7 @@ export default function OrderDetails() {
                                         Edit
                                     </DropdownItem>
                                     <DropdownItem divider />
-                                    <DropdownItem className="text-danger">
+                                    <DropdownItem className="text-danger" onClick={() => setDeleteModal(true)}>
                                         Delete
                                     </DropdownItem>
                                 </DropdownMenu>
