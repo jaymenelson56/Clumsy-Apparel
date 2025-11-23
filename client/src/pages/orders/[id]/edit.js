@@ -37,6 +37,9 @@ export default function OrderDetails() {
         fulfilled: false
     });
     const [submitError, setSubmitError] = useState(null);
+    const [imageFile, setImageFile] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+    const [imageURL, setImageURL] = useState("");
 
     useEffect(() => {
         if (!id) return;
@@ -63,6 +66,13 @@ export default function OrderDetails() {
             .catch(() => setError("Failed to load order"))
             .finally(() => setLoading(false));
     }, [id]);
+    useEffect(() => {
+        return () => {
+            if (imagePreview && imagePreview.startsWith('blob:')) {
+                URL.revokeObjectURL(imagePreview);
+            }
+        };
+    }, [imagePreview]);
     if (loading) return (
         <>
             <Head>
@@ -89,11 +99,25 @@ export default function OrderDetails() {
         }));
     };
 
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setImageFile(file);
+            setImagePreview(URL.createObjectURL(file));
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitError(null);
         try {
-            await updateOrder(id, formData);
+            const submitData = { ...formData };
+            if (imageFile) {
+                submitData.image = imageFile;
+            } else if (imageURL) {
+                submitData.imageURL = imageURL;
+            }
+            await updateOrder(id, submitData);
             router.push(`/orders/${id}`);
         } catch (err) {
             console.error(err);
@@ -121,7 +145,7 @@ export default function OrderDetails() {
                         </CardHeader>
                         <CardImg
                             top
-                            src={order.imageURL || "/image-not-found.png"}
+                            src={imagePreview || order.imageURL || "/image-not-found.png"}
                             alt={`${order.vinylType} order`}
                             onError={(e) => {
                                 e.currentTarget.src = "/image-not-found.png";
@@ -130,6 +154,36 @@ export default function OrderDetails() {
                         />
                         <CardBody>
                             <Form onSubmit={handleSubmit}>
+                                <FormGroup>
+                                    <Label for="imageInput">Upload New Image (optional):</Label>
+                                    <Input
+                                        id="imageInput"
+                                        name="image"
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleImageChange}
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="imageURLInput">Or enter image URL:</Label>
+                                    <div className="d-flex gap-2">
+                                        <Input
+                                            id="imageURLInput"
+                                            name="imageURL"
+                                            type="text"
+                                            value={imageURL}
+                                            onChange={(e) => setImageURL(e.target.value)}
+                                            placeholder={order.imageURL || "type or paste in manually"}
+                                        />
+                                        <Button
+                                            color="info"
+                                            onClick={() => setImagePreview(imageURL)}
+                                            disabled={!imageURL}
+                                        >
+                                            Preview
+                                        </Button>
+                                    </div>
+                                </FormGroup>
                                 <FormGroup>
                                     <Label for="vinylInput">Vinyl Used:</Label>
                                     <Input
