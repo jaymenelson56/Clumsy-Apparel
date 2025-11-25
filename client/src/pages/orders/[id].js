@@ -162,6 +162,7 @@ export default function OrderDetails() {
                                 {order.updatedOn && <ListGroupItem><strong>Last Edited:</strong> {new Date(order.updatedOn).toLocaleDateString()}</ListGroupItem>}
                             </ListGroup>
                         </CardBody>
+                        <Button color="secondary" onClick={() => router.push("/orders")}>Back to Orders</Button>
                     </Card>
                 </main>
             </div>
