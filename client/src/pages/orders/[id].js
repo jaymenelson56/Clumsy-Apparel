@@ -82,8 +82,27 @@ export default function OrderDetails() {
             </div>
         </>
     )
-    if (error) return <div>Error: {error}</div>;
-    if (!order) return <div>Order not found</div>;
+    if (error) return (
+        <div className={styles.page}>
+            <main className={styles.main}>
+                <div className="text-center mt-5">
+                    <p>Error: {error}</p>
+                    <Button color="secondary" onClick={() => router.push("/orders")}>Order List</Button>
+                </div>
+            </main>
+        </div>
+    );
+
+    if (!order) return (
+        <div className={styles.page}>
+            <main className={styles.main}>
+                <div className="text-center mt-5">
+                    <p>Order not found</p>
+                    <Button color="secondary" onClick={() => router.push("/orders")}>Order List</Button>
+                </div>
+            </main>
+        </div>
+    );
 
     return (
         <>
