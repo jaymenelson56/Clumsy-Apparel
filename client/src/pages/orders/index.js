@@ -37,6 +37,7 @@ export default function OrderList() {
         minHours: "",
         maxHours: "",
         rating: "",
+        notes: "",
     });
     const [isFiltered, setIsFiltered] = useState(false);
     const [pagination, setPagination] = useState({
@@ -83,6 +84,13 @@ export default function OrderList() {
             setIsLoading(false);
         }
     };
+    const clearFilters = () => {
+        setFilters({
+            vinyl: "", shirt: "", neededHelp: "", fulfilled: "",
+            minPrice: "", maxPrice: "", minHours: "", maxHours: "",
+            rating: "", notes: ""
+        });
+    };
     if (isLoading) {
         return (
             <>
@@ -120,7 +128,7 @@ export default function OrderList() {
                             <Collapse isOpen={isOpen}>
                                 <Form>
                                     <Row>
-                                        <Col xs={12} md={6}>
+                                        <Col xs={12} md={4}>
                                             <FormGroup>
                                                 <Label for="vinylFilter">Vinyl</Label>
                                                 <Input
@@ -133,7 +141,7 @@ export default function OrderList() {
                                                 />
                                             </FormGroup>
                                         </Col>
-                                        <Col xs={12} md={6}>
+                                        <Col xs={12} md={4}>
                                             <FormGroup>
                                                 <Label for="shirtFilter">Shirt</Label>
                                                 <Input
@@ -146,42 +154,20 @@ export default function OrderList() {
                                                 />
                                             </FormGroup>
                                         </Col>
-                                    </Row>
-
-                                    <Row>
-                                        <Col xs={12} md={6}>
+                                        <Col xs={12} md={4}>
                                             <FormGroup>
-                                                <Label for="neededHelp">Help Needed</Label>
+                                                <Label for="notesFilter">Notes</Label>
                                                 <Input
-                                                    id="neededHelp"
-                                                    name="neededHelp"
-                                                    type="select"
-                                                    value={filters.neededHelp}
+                                                    id="notesFilter"
+                                                    name="notes"
+                                                    type="text"
+                                                    placeholder="Filter by notes"
+                                                    value={filters.notes}
                                                     onChange={handleFilterChange}
-                                                >
-                                                    <option value="">Does not matter</option>
-                                                    <option value="true">Yes</option>
-                                                    <option value="false">No</option>
-                                                </Input>
-                                            </FormGroup>
-                                        </Col>
-                                        <Col xs={12} md={6}>
-                                            <FormGroup>
-                                                <Label for="fulfilled">Is it fulfilled?</Label>
-                                                <Input id="fulfilled"
-                                                    name="fulfilled"
-                                                    type="select"
-                                                    value={filters.fulfilled}
-                                                    onChange={handleFilterChange}
-                                                >
-                                                    <option value="">Does not matter</option>
-                                                    <option value="true">Yes</option>
-                                                    <option value="false">No</option>
-                                                </Input>
+                                                />
                                             </FormGroup>
                                         </Col>
                                     </Row>
-
                                     <Row>
                                         <Col xs={12} md={6}>
                                             <FormGroup>
@@ -213,7 +199,7 @@ export default function OrderList() {
                                         </Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={12} md={4}>
+                                        <Col xs={12} md={6}>
                                             <FormGroup>
                                                 <Label for="minHours">Minimum Hours</Label>
                                                 <Input
@@ -227,7 +213,7 @@ export default function OrderList() {
                                                 />
                                             </FormGroup>
                                         </Col>
-                                        <Col xs={12} md={4}>
+                                        <Col xs={12} md={6}>
                                             <FormGroup>
                                                 <Label for="maxHours">Maximum Hours</Label>
                                                 <Input
@@ -239,6 +225,39 @@ export default function OrderList() {
                                                     value={filters.maxHours}
                                                     onChange={handleFilterChange}
                                                 />
+                                            </FormGroup>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col xs={12} md={4}>
+                                            <FormGroup>
+                                                <Label for="neededHelp">Help Needed</Label>
+                                                <Input
+                                                    id="neededHelp"
+                                                    name="neededHelp"
+                                                    type="select"
+                                                    value={filters.neededHelp}
+                                                    onChange={handleFilterChange}
+                                                >
+                                                    <option value="">Does not matter</option>
+                                                    <option value="true">Yes</option>
+                                                    <option value="false">No</option>
+                                                </Input>
+                                            </FormGroup>
+                                        </Col>
+                                        <Col xs={12} md={4}>
+                                            <FormGroup>
+                                                <Label for="fulfilled">Is it fulfilled?</Label>
+                                                <Input id="fulfilled"
+                                                    name="fulfilled"
+                                                    type="select"
+                                                    value={filters.fulfilled}
+                                                    onChange={handleFilterChange}
+                                                >
+                                                    <option value="">Does not matter</option>
+                                                    <option value="true">Yes</option>
+                                                    <option value="false">No</option>
+                                                </Input>
                                             </FormGroup>
                                         </Col>
                                         <Col xs={12} md={4}>
@@ -259,6 +278,20 @@ export default function OrderList() {
                                                     <option value="5">5</option>
                                                 </Input>
                                             </FormGroup>
+                                        </Col>
+                                    </Row>
+                                    <Row className="justify-content-end">
+                                        <Col xs={12} md={4}>
+                                        <Button
+                                                color="secondary"
+                                                className="w-100 w-md-auto"
+                                                onClick={() => clearFilters()}
+                                                type="button"
+                                            >
+                                                Clear Filters
+                                            </Button>
+                                            </Col>
+                                            <Col xs={12} md={4}>
                                             <Button
                                                 color="primary"
                                                 className="w-100 w-md-auto"
