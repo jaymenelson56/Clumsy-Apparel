@@ -6,7 +6,7 @@ import {
     CardTitle,
 } from "reactstrap";
 
-export default function Data() {
+export default function Analytics() {
     return (
         <>
             <Head>

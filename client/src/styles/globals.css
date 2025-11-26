@@ -65,3 +65,13 @@ a {
   }
 
 }
+
+.navbar-custom {
+  background-color: #f8f9fa;
+}
+
+@media (prefers-color-scheme: dark) {
+  .navbar-custom {
+    background-color: #343a40; 
+  }
+}

@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "reactstrap";
 
-export default function CreateOrder() {
+export default function CreateListing() {
   return (
     <>
       <Head>
