@@ -2,23 +2,34 @@ import Head from "next/head";
 import styles from "@/styles/Home.module.css";
 import Link from "next/link";
 import {
+  Alert,
   Button,
   Card,
   CardBody,
   CardTitle,
   ListGroup,
   ListGroupItem,
+  Spinner,
 } from "reactstrap";
 import { getSummary } from "./api/analyticsdata";
 import { useEffect, useState } from "react";
 
 export default function Home() {
   const [summary, setSummary] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     getSummary()
-      .then(data => setSummary(data))
-      .catch(err => console.error(err));
+      .then(data => {
+        setSummary(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setError("Failed to load summary data");
+        setLoading(false);
+      });
   }, []);
 
   const formatDate = (date) => {
@@ -39,17 +50,25 @@ export default function Home() {
             <CardBody>
               <CardTitle data-test='welcome' tag="h1" >Welcome to Clumsy Apparel Menu</CardTitle>
 
-              <ListGroup className="mb-3">
-                <ListGroupItem>
-                  <strong>Orders Served:</strong> {summary?.fulfilledOrders || 0}
-                </ListGroupItem>
-                <ListGroupItem>
-                  <strong>Awaiting Fulfilment:</strong> {summary?.unfulfilledOrders || 0}
-                </ListGroupItem>
-                <ListGroupItem>
-                  <strong>Latest Activity On:</strong> {formatDate(summary?.mostRecentActivity)}
-                </ListGroupItem>
-              </ListGroup>
+              {loading ? (
+                <div className="text-center my-3">
+                  <Spinner />
+                </div>
+              ) : error ? (
+                <Alert color="danger" className="mb-3">{error}</Alert>
+              ) : (
+                <ListGroup className="mb-3">
+                  <ListGroupItem>
+                    <strong>Orders Served:</strong> {summary?.fulfilledOrders || 0}
+                  </ListGroupItem>
+                  <ListGroupItem>
+                    <strong>Awaiting Fulfilment:</strong> {summary?.unfulfilledOrders || 0}
+                  </ListGroupItem>
+                  <ListGroupItem>
+                    <strong>Latest Activity On:</strong> {formatDate(summary?.mostRecentActivity)}
+                  </ListGroupItem>
+                </ListGroup>
+              )}
 
               <div className="d-flex flex-column align-items-center justify-content-center gap-2">
                 <div>
