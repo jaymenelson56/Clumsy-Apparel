@@ -177,8 +177,8 @@ export default function OrderDetails() {
                                 <ListGroupItem><strong>Rating:</strong> {order.rating}/5</ListGroupItem>
                                 {order.notes && <ListGroupItem><strong>Notes:</strong> {order.notes}</ListGroupItem>}
                                 <ListGroupItem><strong>Fulfilled:</strong> {order.fulfilled ? "Yes" : "No"}</ListGroupItem>
-                                <ListGroupItem><strong>Created:</strong> {new Date(order.createdOn).toLocaleDateString()}</ListGroupItem>
-                                {order.updatedOn && <ListGroupItem><strong>Last Edited:</strong> {new Date(order.updatedOn).toLocaleDateString()}</ListGroupItem>}
+                                <ListGroupItem><strong>Created:</strong> {new Date(order.createdOn).toLocaleString()}</ListGroupItem>
+                                {order.updatedOn && <ListGroupItem><strong>Last Edited:</strong> {new Date(order.updatedOn).toLocaleString()}</ListGroupItem>}
                             </ListGroup>
                         </CardBody>
                         <Button color="secondary" onClick={() => router.push("/orders")}>Back to Orders</Button>
