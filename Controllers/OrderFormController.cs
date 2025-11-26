@@ -379,16 +379,21 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
     [HttpGet("summary")]
     public async Task<IActionResult> GetSummary()
     {
-        SummaryDTO? summary = await _dbContext.OrderForms
-            .GroupBy(o => 1)
-            .Select(g => new SummaryDTO
-            {
-                TotalHours = g.Sum(o => o.HoursLogged),
-                AverageRating = g.Average(o => (double)o.Rating),
-                FulfilledRevenue = g.Where(o => o.Fulfilled).Sum(o => o.Price)
-            })
-            .FirstOrDefaultAsync();
+         SummaryDTO? summary = await _dbContext.OrderForms
+        .GroupBy(o => 1)
+        .Select(g => new SummaryDTO
+        {
+            TotalHours = g.Sum(o => o.HoursLogged),
+            AverageRating = g.Average(o => (double)o.Rating),
+            FulfilledRevenue = g.Where(o => o.Fulfilled).Sum(o => o.Price),
+            FirstProjectCreated = g.Min(o => (DateTime?)o.CreatedOn),
+            MostRecentActivity = g.Max(o => o.UpdatedOn ?? o.CreatedOn),
+            TotalOrders = g.Count(),
+            FulfilledOrders = g.Count(o => o.Fulfilled),
+            UnfulfilledOrders = g.Count(o => !o.Fulfilled)
+        })
+        .FirstOrDefaultAsync();
 
-        return Ok(summary ?? new SummaryDTO());
-    }
+    return Ok(summary ?? new SummaryDTO());
+}
 }
