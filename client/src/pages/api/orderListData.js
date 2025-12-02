@@ -56,7 +56,7 @@ export async function getOrderById(id) {
 export async function updateOrder(id, data) {
   try {
     const formData = new FormData();
-    
+
     // Only append fields that exist
     if (data.vinylType) formData.append("VinylType", data.vinylType);
     if (data.shirtType) formData.append("ShirtType", data.shirtType);
@@ -102,6 +102,41 @@ export async function deleteOrder(id) {
     return await response.json();
   } catch (error) {
     console.error("Error deleting order:", error);
+    throw error;
+  }
+}
+
+export async function createOrder(data) {
+  try {
+    const formData = new FormData();
+
+    // Required fields
+    formData.append("VinylType", data.vinylType);
+    formData.append("ShirtType", data.shirtType);
+    formData.append("Price", data.price);
+    formData.append("HoursLogged", data.hoursLogged);
+    formData.append("AmountOfErrors", data.amountOfErrors || 0);
+    formData.append("NeededHelp", data.neededHelp);
+    formData.append("Rating", data.rating);
+    formData.append("Fulfilled", data.fulfilled || false);
+
+    // Optional fields
+    if (data.notes) formData.append("Notes", data.notes);
+    if (data.image) formData.append("Image", data.image);
+    if (data.imageURL) formData.append("ImageURL", data.imageURL);
+
+    const response = await fetch(BASE_URL, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to create order: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error creating order:", error);
     throw error;
   }
 }
