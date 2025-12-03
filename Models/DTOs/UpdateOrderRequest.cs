@@ -6,8 +6,11 @@ public class UpdateOrderRequest
 {
     public string? VinylType { get; set; }
     public string? ShirtType { get; set; }
+    [Range(0, double.MaxValue, ErrorMessage = "Price cannot be negative.")]
     public decimal? Price { get; set; }
+    [Range(0, double.MaxValue, ErrorMessage = "Hours cannot be negative.")]
     public decimal? HoursLogged { get; set; }
+    [Range(0, int.MaxValue, ErrorMessage = "Errors cannot be negative.")]
     public int? AmountOfErrors { get; set; }
     public bool? NeededHelp { get; set; }
 

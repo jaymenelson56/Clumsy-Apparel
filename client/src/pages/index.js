@@ -72,7 +72,7 @@ export default function Home() {
 
               <div className="d-flex flex-column align-items-center justify-content-center gap-2">
                 <div>
-                  <Link href="/create_order" passHref>
+                  <Link href="/create_listing" passHref>
                     <Button data-test='create-button' className={styles.button}>Create Listing</Button>
                   </Link>
                 </div>
@@ -82,7 +82,7 @@ export default function Home() {
                   </Link>
                 </div>
                 <div>
-                  <Link href="/data" passHref>
+                  <Link href="/analytics" passHref>
                     <Button data-test='data-button' className={styles.button}>Analytics</Button>
                   </Link>
                 </div>
