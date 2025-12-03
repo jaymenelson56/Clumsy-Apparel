@@ -24,13 +24,13 @@ export default function OrderDetails() {
     const [formData, setFormData] = useState({
         vinylType: "",
         shirtType: "",
-        price: 0,
-        hoursLogged: 0,
-        amountOfErrors: 0,
-        neededHelp: false,
-        rating: 1,
+        price: "",
+        hoursLogged: "",
+        amountOfErrors: "",
+        neededHelp: "",
+        rating: "",
         notes: "",
-        fulfilled: false
+        fulfilled: ""
     });
     const [submitError, setSubmitError] = useState(null);
     const [imageFile, setImageFile] = useState(null);
@@ -75,17 +75,17 @@ export default function OrderDetails() {
                 submitData.imageURL = imageURL;
             }
             await createOrder(submitData);
-            router.push(`/orders/${id}`);
+            router.push("/orders");
         } catch (err) {
             console.error(err);
-            setSubmitError("Failed to update formData. Please try again.");
+            setSubmitError("Failed to create order. Please try again.");
         }
     };
 
     return (
         <>
             <Head>
-                <title>{formData.vinylType}New Listing - Clumsy Apparel</title>
+                <title>{formData.vinylType}Create Listing - Clumsy Apparel</title>
             </Head>
             <div className={styles.page}>
                 <main className={styles.main}>
@@ -95,7 +95,7 @@ export default function OrderDetails() {
                         style={{ borderWidth: '3px' }}
                     >
                         <CardHeader>
-                            <CardTitle tag="h2">{formData.id}: {formData.vinylType} on {formData.shirtType}</CardTitle>
+                            <CardTitle tag="h2">Create Listing</CardTitle>
                         </CardHeader>
                         <CardImg
                             top
@@ -104,7 +104,7 @@ export default function OrderDetails() {
                             onError={(e) => {
                                 e.currentTarget.src = "/image-not-found.png";
                             }}
-                            style={{ maxHeight: '400px', objectFit: 'cover' }}
+                            style={{ maxHeight: '300px', objectFit: 'cover' }}
                         />
                         <CardBody>
                             <Form onSubmit={handleSubmit}>
@@ -127,7 +127,7 @@ export default function OrderDetails() {
                                             type="text"
                                             value={imageURL}
                                             onChange={(e) => setImageURL(e.target.value)}
-                                            placeholder={formData.imageURL || "type or paste in manually"}
+                                            placeholder={"type or paste in manually"}
                                         />
                                         <Button
                                             color="info"
@@ -145,7 +145,9 @@ export default function OrderDetails() {
                                         name="vinylType"
                                         type="text"
                                         value={formData.vinylType}
+                                        placeholder="Enter Vinyl Type"
                                         onChange={handleChange}
+                                        required
                                     />
                                 </FormGroup>
                                 <FormGroup>
@@ -155,7 +157,9 @@ export default function OrderDetails() {
                                         name="shirtType"
                                         type="text"
                                         value={formData.shirtType}
+                                        placeholder="Enter Shirt Type"
                                         onChange={handleChange}
+                                        required
                                     />
                                 </FormGroup>
                                 <FormGroup>
@@ -165,8 +169,11 @@ export default function OrderDetails() {
                                         name="price"
                                         type="number"
                                         step="0.01"
+                                        min="0"
+                                        placeholder="Enter Price"
                                         value={formData.price}
                                         onChange={handleChange}
+                                        required
                                     />
                                 </FormGroup>
                                 <FormGroup>
@@ -176,8 +183,11 @@ export default function OrderDetails() {
                                         name="hoursLogged"
                                         type="number"
                                         step="0.50"
+                                        min="0"
+                                        placeholder="Enter Hours"
                                         value={formData.hoursLogged}
                                         onChange={handleChange}
+                                        required
                                     />
                                 </FormGroup>
                                 <FormGroup>
@@ -186,8 +196,11 @@ export default function OrderDetails() {
                                         id="errorInput"
                                         name="amountOfErrors"
                                         type="number"
+                                        placeholder="Enter Error Number"
+                                        min="0"
                                         value={formData.amountOfErrors}
                                         onChange={handleChange}
+                                        required
                                     />
                                 </FormGroup>
                                 <FormGroup>
@@ -198,7 +211,9 @@ export default function OrderDetails() {
                                         type="select"
                                         value={formData.neededHelp}
                                         onChange={handleChange}
+                                        required
                                     >
+                                        <option value="" disabled hidden>Did You Get Help</option>
                                         <option value="true">Yes</option>
                                         <option value="false">No</option>
                                     </Input>
@@ -211,7 +226,9 @@ export default function OrderDetails() {
                                         type="select"
                                         value={formData.rating}
                                         onChange={handleChange}
+                                        required
                                     >
+                                        <option value="" disabled hidden>Select a Rating</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
@@ -225,6 +242,7 @@ export default function OrderDetails() {
                                         id="notesInput"
                                         name="notes"
                                         type="textarea"
+                                        placeholder="Enter Notes"
                                         value={formData.notes}
                                         onChange={handleChange}
                                     />
@@ -236,13 +254,15 @@ export default function OrderDetails() {
                                         type="select"
                                         value={formData.fulfilled}
                                         onChange={handleChange}
+                                        required
                                     >
+                                        <option value="" disabled hidden>Was it Fulfilled</option>
                                         <option value="true">Yes</option>
                                         <option value="false">No</option>
                                     </Input>
                                 </FormGroup>
                                 <div className="d-flex gap-2 mt-3">
-                                    <Button color="primary" type="submit">Save Changes</Button>
+                                    <Button color="primary" type="submit">Create</Button>
                                     <Button color="secondary" onClick={() => router.back()}>Cancel</Button>
                                 </div>
                                 {submitError && <div className="text-danger">{submitError}</div>}

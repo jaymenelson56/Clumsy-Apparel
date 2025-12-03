@@ -169,7 +169,7 @@ export default function OrderDetails() {
                             onError={(e) => {
                                 e.currentTarget.src = "/image-not-found.png";
                             }}
-                            style={{ maxHeight: '400px', objectFit: 'cover' }}
+                            style={{ maxHeight: '300px', objectFit: 'cover' }}
                         />
                         <CardBody>
                             <Form onSubmit={handleSubmit}>
