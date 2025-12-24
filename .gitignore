@@ -483,4 +483,13 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 
-client/public/uploads/
+# Next.js
+client/.next/
+client/dist/
+
+# Electron
+out/
+release/
+
+# Node
+node_modules/

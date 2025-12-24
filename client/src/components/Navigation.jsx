@@ -6,7 +6,7 @@ export default function Navigation() {
   const router = useRouter();
 
   return (
-    <Navbar dark expand="md" className="navbar-custom">
+    <Navbar expand="md" className="navbar-custom">
       <Nav className="mx-auto" navbar>
         <NavItem>
           <NavLink tag={Link} href="/" active={router.pathname === "/"}>
