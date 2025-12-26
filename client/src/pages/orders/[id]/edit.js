@@ -17,7 +17,7 @@ import {
     Button,
 } from "reactstrap";
 import Head from "next/head";
-import { getOrderById, updateOrder } from "@/pages/api/orderListData";
+import { getOrderById, updateOrder } from "../../../api/orderListData";
 
 export default function OrderDetails() {
     const router = useRouter();

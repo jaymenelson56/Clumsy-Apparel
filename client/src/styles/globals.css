@@ -75,3 +75,17 @@ a {
     background-color: #343a40; 
   }
 }
+
+.navbar-custom .nav-link {
+  color: var(--foreground) !important;
+}
+
+.navbar-custom .nav-link.active {
+  font-weight: bold;
+}
+
+@media (prefers-color-scheme: dark) {
+  .navbar-custom .nav-link {
+    color: var(--foreground) !important;
+  }
+}

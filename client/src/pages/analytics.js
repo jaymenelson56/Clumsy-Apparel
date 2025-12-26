@@ -9,7 +9,7 @@ import {
     Spinner,
     Col
 } from "reactstrap";
-import { getSummary } from "./api/analyticsdata";
+import { getSummary } from "../api/analyticsdata";
 
 export default function Analytics() {
     const [summary, setSummary] = useState(null);

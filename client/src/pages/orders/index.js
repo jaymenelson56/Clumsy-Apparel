@@ -20,8 +20,9 @@ import {
     PaginationLink
 } from "reactstrap";
 import { useEffect, useState } from "react";
-import { getOrders } from "../api/orderListData";
+
 import Link from "next/link";
+import { getOrders } from "../../api/orderListData";
 
 
 export default function OrderList() {
@@ -335,7 +336,7 @@ export default function OrderList() {
                                                     <CardImg
                                                         top
                                                         width="100%"
-                                                        src={order.imageURL || "/image-not-found.png"}
+                                                        src={order.imageURL ? `http://localhost:5000${order.imageURL}` : "/image-not-found.png"}
                                                         alt={`Order ${order.id} image`}
                                                         className="img-fluid"
                                                         style={{ height: "200px", objectFit: "cover" }}

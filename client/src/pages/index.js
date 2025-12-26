@@ -11,7 +11,7 @@ import {
   ListGroupItem,
   Spinner,
 } from "reactstrap";
-import { getSummary } from "./api/analyticsdata";
+import { getSummary } from "../api/analyticsdata";
 import { useEffect, useState } from "react";
 
 export default function Home() {
