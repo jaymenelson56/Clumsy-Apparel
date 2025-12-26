@@ -1,0 +1,15 @@
+{
+  "name": "clumsyapparel-root",
+  "private": true,
+  "scripts": {
+    "backend": "dotnet run",
+    "client": "cd client && npm run dev",
+    "client:prod": "cd client && npm run prod",
+    "electron": "cd client && npm run electron:wait",
+    "start-all": "concurrently \"npm run backend\" \"npm run client\" \"npm run electron\"",
+    "prod-all": "concurrently \"npm run backend\" \"npm run client:prod\" \"npm run electron\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
