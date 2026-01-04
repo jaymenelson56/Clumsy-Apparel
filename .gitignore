@@ -493,3 +493,30 @@ release/
 
 # Node
 node_modules/
+
+# Build outputs
+**/bin/
+**/obj/
+**/dist/
+**/out/
+**/.next/
+
+# Databases
+*.db
+*.db-shm
+*.db-wal
+
+# Dependencies
+**/node_modules/
+
+# User secrets
+appsettings.Development.json
+
+# Uploads
+**/wwwroot/uploads/*
+!**/wwwroot/uploads/.gitkeep
+
+# Build outputs
+wwwroot/
+client/wwwroot/
+client/web/
