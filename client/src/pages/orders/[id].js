@@ -87,7 +87,7 @@ export default function OrderDetails() {
             <main className={styles.main}>
                 <div className="text-center mt-5">
                     <p>Error: {error}</p>
-                    <Button color="secondary" onClick={() => router.push("/orders")}>Order List</Button>
+                    <Button color="secondary" onClick={() => router.push("/orders/")}>Order List</Button>
                 </div>
             </main>
         </div>
@@ -98,7 +98,7 @@ export default function OrderDetails() {
             <main className={styles.main}>
                 <div className="text-center mt-5">
                     <p>Order not found</p>
-                    <Button color="secondary" onClick={() => router.push("/orders")}>Order List</Button>
+                    <Button color="secondary" onClick={() => router.push("/orders/")}>Order List</Button>
                 </div>
             </main>
         </div>
@@ -121,7 +121,7 @@ export default function OrderDetails() {
                 <ModalHeader>Success</ModalHeader>
                 <ModalBody>Order Deleted Successfully</ModalBody>
                 <ModalFooter>
-                    <Button color="primary" onClick={() => router.push('/orders')}>Ok</Button>
+                    <Button color="primary" onClick={() => router.push('/orders/')}>Ok</Button>
                 </ModalFooter>
             </Modal>
             {deleteError && (
@@ -147,7 +147,7 @@ export default function OrderDetails() {
                                     ⋮
                                 </DropdownToggle>
                                 <DropdownMenu end>
-                                    <DropdownItem onClick={() => router.push(`/orders/${id}/edit`)}>
+                                    <DropdownItem onClick={() => router.push(`/orders/${id}/edit/`)}>
                                         Edit
                                     </DropdownItem>
                                     <DropdownItem divider />
@@ -181,7 +181,7 @@ export default function OrderDetails() {
                                 {order.updatedOn && <ListGroupItem><strong>Last Edited:</strong> {new Date(order.updatedOn).toLocaleString()}</ListGroupItem>}
                             </ListGroup>
                         </CardBody>
-                        <Button color="secondary" onClick={() => router.push("/orders")}>Back to Orders</Button>
+                        <Button color="secondary" onClick={() => router.push("/orders/")}>Back to Orders</Button>
                     </Card>
                 </main>
             </div>

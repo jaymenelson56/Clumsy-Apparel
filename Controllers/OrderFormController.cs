@@ -201,7 +201,7 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
 
             if (request.Image != null && request.Image.Length > 0)
             {
-                string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                string uploadsFolder = Path.Combine(AppContext.BaseDirectory, "wwwroot", "uploads");
                 Directory.CreateDirectory(uploadsFolder);
 
                 string fileName = Path.GetFileName(request.Image.FileName)
@@ -306,7 +306,7 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
 
         if (request.Image != null && request.Image.Length > 0)
         {
-            string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+            string uploadsFolder = Path.Combine(AppContext.BaseDirectory, "wwwroot", "uploads");
             Directory.CreateDirectory(uploadsFolder);
 
             string fileName = Path.GetFileName(request.Image.FileName)
@@ -353,7 +353,7 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
 );
 
                 string imagePath = Path.Combine(
-                    Directory.GetCurrentDirectory(),
+                    AppContext.BaseDirectory,
                     "wwwroot",
                      "uploads",
                     Path.GetFileName(order.ImageURL)
@@ -379,21 +379,26 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
     [HttpGet("summary")]
     public async Task<IActionResult> GetSummary()
     {
-        SummaryDTO? summary = await _dbContext.OrderForms
-       .GroupBy(o => 1)
-       .Select(g => new SummaryDTO
-       {
-           TotalHours = g.Sum(o => o.HoursLogged),
-           AverageRating = g.Average(o => (double)o.Rating),
-           FulfilledRevenue = g.Where(o => o.Fulfilled).Sum(o => o.Price),
-           FirstProjectCreated = g.Min(o => (DateTime?)o.CreatedOn),
-           MostRecentActivity = g.Max(o => o.UpdatedOn ?? o.CreatedOn),
-           TotalOrders = g.Count(),
-           FulfilledOrders = g.Count(o => o.Fulfilled),
-           UnfulfilledOrders = g.Count(o => !o.Fulfilled)
-       })
-       .FirstOrDefaultAsync();
+        List<OrderForm> orders = await _dbContext.OrderForms.ToListAsync(); // Load to memory first
 
-        return Ok(summary ?? new SummaryDTO());
+        if (orders.Count == 0)
+        {
+            return Ok(new SummaryDTO());
+        }
+
+        SummaryDTO summary = new SummaryDTO
+        {
+            TotalHours = orders.Sum((OrderForm o) => o.HoursLogged),
+            AverageRating = orders.Average((OrderForm o) => (double)o.Rating),
+            FulfilledRevenue = orders.Where((OrderForm o) => o.Fulfilled)
+                                     .Sum((OrderForm o) => o.Price),
+            FirstProjectCreated = orders.Min((OrderForm o) => (DateTime?)o.CreatedOn),
+            MostRecentActivity = orders.Max((OrderForm o) => o.UpdatedOn ?? o.CreatedOn),
+            TotalOrders = orders.Count,
+            FulfilledOrders = orders.Count((OrderForm o) => o.Fulfilled),
+            UnfulfilledOrders = orders.Count((OrderForm o) => !o.Fulfilled)
+        };
+
+        return Ok(summary);
     }
 }

@@ -1,9 +1,14 @@
 using System.Text.Json.Serialization;
 using clumsyapparel.Data;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.EntityFrameworkCore;
 
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    ContentRootPath = AppContext.BaseDirectory,
+    Args = args
+});
 
 builder.Services.AddControllers().AddJsonOptions(opts =>
 {
@@ -13,16 +18,19 @@ builder.Services.AddControllers().AddJsonOptions(opts =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddNpgsql<clumsyapparelDbContext>(builder.Configuration["clumsyapparelDbConnectionString"]);
+builder.Services.AddDbContext<clumsyapparelDbContext>(options =>
+    options.UseSqlite(builder.Configuration["clumsyapparelDbConnectionString"] 
+        ?? $"Data Source={Path.Combine(AppContext.BaseDirectory, "clumsyapparel.db")}")
+);
 
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:3000") // Your Next.js frontend
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+         policy
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
     });
 });
 
@@ -35,26 +43,33 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+
 app.UseCors("AllowFrontend");
 
-var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+var uploadsPath = Path.Combine(app.Environment.ContentRootPath, "wwwroot", "uploads");
 Directory.CreateDirectory(uploadsPath);
 
-app.UseStaticFiles();
-
-if (!Directory.Exists(uploadsPath))
-{
-    Directory.CreateDirectory(uploadsPath);
-}
+app.UseDefaultFiles();
 
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(uploadsPath),
-    RequestPath = "/uploads"
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(app.Environment.ContentRootPath, "wwwroot") // copy Next build here
+    ),
+    RequestPath = ""
 });
 
 
 app.MapControllers();
+
+
+app.MapGet("/health", () => Results.Ok("OK"));
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<clumsyapparelDbContext>();
+    db.Database.Migrate();
+}
+
 
 app.Run();

@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using clumsyapparel.Data;
 
 #nullable disable
@@ -12,65 +11,59 @@ using clumsyapparel.Data;
 namespace ClumsyApparel.Migrations
 {
     [DbContext(typeof(clumsyapparelDbContext))]
-    [Migration("20251010005621_MakeUpdatedOnNullable")]
-    partial class MakeUpdatedOnNullable
+    [Migration("20260103023544_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
-
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
 
             modelBuilder.Entity("clumsyapparel.Models.OrderForm", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("AmountOfErrors")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("Fulfilled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("INTEGER");
 
                     b.Property<decimal>("HoursLogged")
-                        .HasColumnType("numeric");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ImageURL")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("NeededHelp")
-                        .HasColumnType("boolean");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Notes")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("TEXT");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Rating")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ShirtType")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("VinylType")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -81,7 +74,7 @@ namespace ClumsyApparel.Migrations
                         {
                             Id = 1,
                             AmountOfErrors = 0,
-                            CreatedOn = new DateTime(2025, 10, 10, 0, 56, 21, 37, DateTimeKind.Utc).AddTicks(5668),
+                            CreatedOn = new DateTime(2026, 1, 3, 2, 35, 44, 558, DateTimeKind.Utc).AddTicks(8719),
                             Fulfilled = true,
                             HoursLogged = 1.5m,
                             NeededHelp = false,
@@ -89,14 +82,14 @@ namespace ClumsyApparel.Migrations
                             Price = 19.99m,
                             Rating = 5,
                             ShirtType = "Cotton Tee",
-                            UpdatedOn = new DateTime(2025, 10, 10, 0, 56, 21, 37, DateTimeKind.Utc).AddTicks(5673),
+                            UpdatedOn = new DateTime(2026, 1, 3, 2, 35, 44, 558, DateTimeKind.Utc).AddTicks(8720),
                             VinylType = "Heat Transfer"
                         },
                         new
                         {
                             Id = 2,
                             AmountOfErrors = 1,
-                            CreatedOn = new DateTime(2025, 10, 10, 0, 56, 21, 37, DateTimeKind.Utc).AddTicks(5678),
+                            CreatedOn = new DateTime(2026, 1, 3, 2, 35, 44, 558, DateTimeKind.Utc).AddTicks(8727),
                             Fulfilled = false,
                             HoursLogged = 2.0m,
                             NeededHelp = true,
@@ -104,14 +97,14 @@ namespace ClumsyApparel.Migrations
                             Price = 35.50m,
                             Rating = 4,
                             ShirtType = "Hoodie",
-                            UpdatedOn = new DateTime(2025, 10, 10, 0, 56, 21, 37, DateTimeKind.Utc).AddTicks(5678),
+                            UpdatedOn = new DateTime(2026, 1, 3, 2, 35, 44, 558, DateTimeKind.Utc).AddTicks(8728),
                             VinylType = "Glitter"
                         },
                         new
                         {
                             Id = 3,
                             AmountOfErrors = 0,
-                            CreatedOn = new DateTime(2025, 10, 10, 0, 56, 21, 37, DateTimeKind.Utc).AddTicks(5681),
+                            CreatedOn = new DateTime(2026, 1, 3, 2, 35, 44, 558, DateTimeKind.Utc).AddTicks(8731),
                             Fulfilled = true,
                             HoursLogged = 1.0m,
                             NeededHelp = false,
@@ -119,14 +112,14 @@ namespace ClumsyApparel.Migrations
                             Price = 15.00m,
                             Rating = 5,
                             ShirtType = "Tank Top",
-                            UpdatedOn = new DateTime(2025, 10, 10, 0, 56, 21, 37, DateTimeKind.Utc).AddTicks(5681),
+                            UpdatedOn = new DateTime(2026, 1, 3, 2, 35, 44, 558, DateTimeKind.Utc).AddTicks(8731),
                             VinylType = "Matte"
                         },
                         new
                         {
                             Id = 4,
                             AmountOfErrors = 2,
-                            CreatedOn = new DateTime(2025, 10, 10, 0, 56, 21, 37, DateTimeKind.Utc).AddTicks(5684),
+                            CreatedOn = new DateTime(2026, 1, 3, 2, 35, 44, 558, DateTimeKind.Utc).AddTicks(8734),
                             Fulfilled = false,
                             HoursLogged = 2.5m,
                             NeededHelp = true,
@@ -134,14 +127,14 @@ namespace ClumsyApparel.Migrations
                             Price = 28.75m,
                             Rating = 3,
                             ShirtType = "Long Sleeve",
-                            UpdatedOn = new DateTime(2025, 10, 10, 0, 56, 21, 37, DateTimeKind.Utc).AddTicks(5684),
+                            UpdatedOn = new DateTime(2026, 1, 3, 2, 35, 44, 558, DateTimeKind.Utc).AddTicks(8735),
                             VinylType = "Holographic"
                         },
                         new
                         {
                             Id = 5,
                             AmountOfErrors = 0,
-                            CreatedOn = new DateTime(2025, 10, 10, 0, 56, 21, 37, DateTimeKind.Utc).AddTicks(5686),
+                            CreatedOn = new DateTime(2026, 1, 3, 2, 35, 44, 558, DateTimeKind.Utc).AddTicks(8737),
                             Fulfilled = true,
                             HoursLogged = 1.75m,
                             NeededHelp = false,
@@ -149,7 +142,7 @@ namespace ClumsyApparel.Migrations
                             Price = 24.00m,
                             Rating = 4,
                             ShirtType = "Raglan",
-                            UpdatedOn = new DateTime(2025, 10, 10, 0, 56, 21, 37, DateTimeKind.Utc).AddTicks(5687),
+                            UpdatedOn = new DateTime(2026, 1, 3, 2, 35, 44, 558, DateTimeKind.Utc).AddTicks(8738),
                             VinylType = "Foil"
                         });
                 });
