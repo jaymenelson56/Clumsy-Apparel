@@ -331,7 +331,7 @@ export default function OrderList() {
                                 ) : (
                                     orders.map((order) => (
                                         <Col xs={12} sm={6} md={4} key={order.id} className="mb-4">
-                                            <Link href={`/orders/${order.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                            <Link href={`/orders/${order.id}/`} style={{ textDecoration: 'none', color: 'inherit' }}>
                                                 <Card>
                                                     <CardImg
                                                         top

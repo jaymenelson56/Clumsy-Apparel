@@ -1,20 +1,29 @@
 {
   "name": "client",
   "version": "0.1.0",
+  "author": "Your Name",
+  "description": "Desktop app for managing apparel orders",
+  "license": "MIT",
   "private": true,
   "main": "main.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:backend": "xcopy /E /I /Y out ..\\wwwroot",
     "start": "next start -p 3000",
+    "export": "next export",
     "lint": "next lint",
     "electron": "electron .",
     "electron:wait": "wait-on http://localhost:3000 && electron .",
-    "prod": "npm run build && npm run start"
+    "prod": "npm run build && npm run start",
+    "dist": "electron-builder",
+    "build:dotnet": "cd .. && dotnet publish -c Release -r win-x64 --self-contained && cd client",
+    "dist:win": "npm run build:dotnet && next build && npm run build:backend && electron-builder --win"
   },
   "dependencies": {
     "bootstrap": "^5.3.7",
     "next": "^15.3.6",
+    "node-fetch": "^3.3.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "reactstrap": "^9.2.3",
@@ -25,8 +34,36 @@
     "concurrently": "^9.2.1",
     "cypress": "^14.5.4",
     "electron": "^39.2.6",
+    "electron-builder": "^26.0.12",
     "eslint": "^9",
     "eslint-config-next": "15.3.4",
     "wait-on": "^9.0.3"
+  },
+  "build": {
+    "appId": "com.clumsyapparel.desktop",
+    "productName": "Clumsy Apparel",
+    "asar": true,
+    "directories": {
+      "buildResources": "assets",
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      ".next/**",
+      "node_modules/**",
+      "package.json",
+      "assets/**",
+      "preload.js"
+    ],
+    "extraResources": [
+      {
+        "from": "../bin/Release/net8.0/win-x64/publish",
+        "to": "backend"
+      }
+    ],
+    "win": {
+      "target": "nsis",
+      "signAndEditExecutable": false
+    }
   }
 }

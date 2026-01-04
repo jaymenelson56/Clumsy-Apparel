@@ -1,74 +1,59 @@
 const { app, BrowserWindow, Menu, Tray, nativeTheme } = require('electron')
 const path = require('path')
 const { spawn } = require('child_process');
+const http = require('http');
 
 const isDev = !app.isPackaged;
+
+const gotTheLock = app.requestSingleInstanceLock();
+const { exec } = require('child_process');
 
 let tray = null;
 let mainWindow = null;
 let backendProcess = null;
-let frontendProcess = null;
-const kill = require('tree-kill');
-const { exec } = require('child_process');
 
-function killOrphanedProcesses() {
-  return new Promise((resolve) => {
-    console.log('🔍 Checking for orphaned processes...');
-    
-    exec('netstat -ano | findstr :3000', (err, stdout) => {
-      if (stdout) {
-        const lines = stdout.trim().split('\n');
-        lines.forEach(line => {
-          const pid = line.trim().split(/\s+/).pop();
-          if (pid && !isNaN(pid)) {
-            console.log(`Killing orphaned process on port 3000 (PID ${pid})`);
-            exec(`taskkill /PID ${pid} /T /F`);
-          }
-        });
-      }
-    });
-    
-    exec('netstat -ano | findstr :5000', (err, stdout) => {
-      if (stdout) {
-        const lines = stdout.trim().split('\n');
-        lines.forEach(line => {
-          const pid = line.trim().split(/\s+/).pop();
-          if (pid && !isNaN(pid)) {
-            console.log(`Killing orphaned process on port 5000 (PID ${pid})`);
-            exec(`taskkill /PID ${pid} /T /F`);
-          }
-        });
-      }
-    });
-    
-    setTimeout(resolve, 2000);
-  });
+const fetch = require('node-fetch');
+
+
+if (!gotTheLock) {
+  console.log('🚫 Another instance is already running. Exiting...');
+  app.quit();
+  process.exit(0);
 }
 
 
+function getBackendCommand() {
+  if (isDev) {
+    return {
+      command: 'dotnet',
+      args: ['run'],
+      cwd: path.join(__dirname, '..'), // project root
+    };
+  }
+  const backendPath = path.join(process.resourcesPath, 'backend');
+
+  return {
+    command: path.join(backendPath, 'clumsyapparel.exe'),
+    args: [],
+    cwd: backendPath,
+  };
+}
 
 function startFrontend() {
-  if (frontendProcess) return;
-
   console.log('🚀 Starting frontend...');
-
-  frontendProcess = spawn(
-    'npm',
-    ['run', 'start'],
-    {
-      cwd: path.join(__dirname), // client folder (where package.json lives)
-      shell: true,
-    }
-  );
-
+  frontendProcess = spawn('npm', ['run', 'dev'], {
+    cwd: __dirname,
+    shell: true,
+  });
+  
   frontendProcess.stdout.on('data', (data) => {
-    console.log(`[frontend]: ${data}`);
+    console.log(`[frontend]: ${data.toString()}`);
   });
-
+  
   frontendProcess.stderr.on('data', (data) => {
-    console.error(`[frontend error]: ${data}`);
+    console.error(`[frontend error]: ${data.toString()}`);
   });
-
+  
   frontendProcess.on('close', (code) => {
     console.log(`🛑 Frontend exited with code ${code}`);
     frontendProcess = null;
@@ -78,16 +63,14 @@ function startFrontend() {
 function startBackend() {
   if (backendProcess) return;
 
+  const { command, args, cwd } = getBackendCommand();
+
   console.log('🚀 Starting backend...');
 
-  backendProcess = spawn(
-    'dotnet',
-    ['run'],
-    {
-      cwd: path.join(__dirname, '..'), // root where .csproj lives
-      shell: true,
-    }
-  );
+  backendProcess = spawn(command, args, {
+    cwd,
+    shell: isDev,
+  });
 
   backendProcess.stdout.on('data', (data) => {
     console.log(`[backend]: ${data}`);
@@ -105,30 +88,58 @@ function startBackend() {
 
 function stopProcesses() {
   return new Promise((resolve) => {
-    let pending = 0;
-    
-    if (frontendProcess?.pid) {
-      pending++;
-      console.log(`🧨 Killing frontend (PID ${frontendProcess.pid})`);
-      kill(frontendProcess.pid, (err) => {
-        if (err) console.error('Frontend kill error:', err);
-        if (--pending === 0) resolve();
-      });
-      frontendProcess = null;
-    }
+    console.log('🧨 Killing processes on ports...');
 
-    if (backendProcess?.pid) {
-      pending++;
-      console.log(`🧨 Killing backend (PID ${backendProcess.pid})`);
-      kill(backendProcess.pid, (err) => {
-        if (err) console.error('Backend kill error:', err);
-        if (--pending === 0) resolve();
-      });
-      backendProcess = null;
-    }
+    exec('netstat -ano | findstr :3000', (err, stdout) => {
+      if (stdout) {
+        stdout.trim().split('\n').forEach(line => {
+          const pid = line.trim().split(/\s+/).pop();
+          if (pid && !isNaN(pid)) exec(`taskkill /PID ${pid} /T /F`);
+        });
+      }
+    });
 
-    if (pending === 0) resolve();
+    exec('netstat -ano | findstr :5000', (err, stdout) => {
+      if (stdout) {
+        stdout.trim().split('\n').forEach(line => {
+          const pid = line.trim().split(/\s+/).pop();
+          if (pid && !isNaN(pid)) exec(`taskkill /PID ${pid} /T /F`);
+        });
+      }
+    });
+
+    setTimeout(resolve, 1500);
   });
+}
+
+async function waitForBackend(
+  url = "http://localhost:5000/health",
+  retries = 30,
+  delay = 500
+) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const result = await new Promise((resolve) => {
+        http.get(url, (res) => {
+          resolve(res.statusCode === 200);
+        }).on('error', () => {
+          resolve(false);
+        });
+      });
+
+      if (result) {
+        console.log("✅ Backend is healthy");
+        return;
+      }
+    } catch (err) {
+      // backend not ready yet
+    }
+
+    console.log(`⏳ Waiting for backend... (${i + 1}/${retries})`);
+    await new Promise(resolve => setTimeout(resolve, delay));
+  }
+
+  throw new Error("❌ Backend did not become healthy in time");
 }
 
 
@@ -146,41 +157,16 @@ function createWindow() {
 
 
 
-  if (isDev) {
-    // Dev: Next.js dev server
-    mainWindow.loadURL("http://localhost:3000");
-    mainWindow.webContents.openDevTools();
-  } else {
-    // Prod: Next.js build
-    mainWindow.loadURL("http://localhost:3000");
+  mainWindow.loadURL(isDev ? "http://localhost:3000" : "http://localhost:5000");
 
-    if (isDev) {
-      mainWindow.webContents.openDevTools();
-    }
-  }
-
-  const iconPath = path.join(__dirname, 'assets', 'logo.png');
-
-  tray = new Tray(iconPath);
-
-  const trayMenu = Menu.buildFromTemplate([
-    {
-      label: 'Show App',
-      click: () => {
-        mainWindow.show();
-      }
-    },
-    {
-      label: 'Quit',
-      click: () => {
-        app.isQuiting = true;
-        app.quit();
-      }
-    }
-  ]);
-
+  tray = new Tray(path.join(__dirname, 'assets', 'logo.png'));
   tray.setToolTip('Clumsy Apparel');
-  tray.setContextMenu(trayMenu);
+  tray.setContextMenu(Menu.buildFromTemplate([
+    { label: 'Show App', click: () => mainWindow.show() },
+    { label: 'Quit', click: () => { app.isQuiting = true; app.quit(); } }
+  ]));
+
+
 
   const template = [
     {
@@ -250,19 +236,32 @@ function createWindow() {
 }
 
 app.whenReady().then(async () => {
-  await killOrphanedProcesses();
-  startBackend();
-  startFrontend();
-  createWindow();
+  try {
+    startBackend();
+    await waitForBackend();
+    if (isDev) startFrontend();
+    createWindow();
+  } catch (err) {
+    console.error(err);
+    app.quit();
+  }
+
+  app.on('second-instance', () => {
+    console.log('🔁 Second instance detected');
+
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.show();
+      mainWindow.focus();
+    }
+  });
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 })
 
-app.on('window-all-closed', () => {
-  // Intentionally empty — app lives in tray
-});
+app.on('window-all-closed', () => { });
 
 let isQuitting = false;
 
@@ -270,20 +269,11 @@ app.on('before-quit', async (e) => {
   if (isQuitting) return;
   e.preventDefault();
   isQuitting = true;
-  console.log('🧹 Cleaning up child processes...');
   await stopProcesses();
   app.exit();
 });
 
-app.on('will-quit', async () => {
-  await stopProcesses();
-});
 process.on('SIGINT', async () => {
   await stopProcesses();
-  process.exit();
-});
-
-process.on('SIGTERM', async () => {
-  await stopProcesses();
-  process.exit();
+  setTimeout(() => process.exit(), 500);
 });

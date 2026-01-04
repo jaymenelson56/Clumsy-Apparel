@@ -118,7 +118,7 @@ export default function OrderDetails() {
                 submitData.imageURL = imageURL;
             }
             await updateOrder(id, submitData);
-            router.push(`/orders/${id}`);
+            router.push(`/orders/${id}/`);
         } catch (err) {
             console.error(err);
             setSubmitError("Failed to update order. Please try again.");
@@ -130,7 +130,7 @@ export default function OrderDetails() {
             <main className={styles.main}>
                 <div className="text-center mt-5">
                     <p>Error: {error}</p>
-                    <Button color="secondary" onClick={() => router.push("/orders")}>Order List</Button>
+                    <Button color="secondary" onClick={() => router.push("/orders/")}>Order List</Button>
                 </div>
             </main>
         </div>
@@ -141,7 +141,7 @@ export default function OrderDetails() {
             <main className={styles.main}>
                 <div className="text-center mt-5">
                     <p>Order not found</p>
-                    <Button color="secondary" onClick={() => router.push("/orders")}>Order List</Button>
+                    <Button color="secondary" onClick={() => router.push("/orders/")}>Order List</Button>
                 </div>
             </main>
         </div>
