@@ -10,14 +10,15 @@
     "lint": "next lint",
     "electron": "electron .",
     "electron:wait": "wait-on http://localhost:3000 && electron .",
-     "prod": "npm run build && npm run start"
+    "prod": "npm run build && npm run start"
   },
   "dependencies": {
     "bootstrap": "^5.3.7",
     "next": "^15.3.6",
-    "react": "^19.2.1",
-    "react-dom": "^19.2.1",
-    "reactstrap": "^9.2.3"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "reactstrap": "^9.2.3",
+    "tree-kill": "^1.2.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
