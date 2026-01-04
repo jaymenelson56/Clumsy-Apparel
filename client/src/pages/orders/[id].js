@@ -23,7 +23,7 @@ import {
     Button
 } from "reactstrap";
 import Head from "next/head";
-import { deleteOrder, getOrderById } from "../api/orderListData";
+import { deleteOrder, getOrderById } from "../../api/orderListData";
 
 export default function OrderDetails() {
     const router = useRouter();
@@ -159,7 +159,7 @@ export default function OrderDetails() {
                         </CardHeader>
                         <CardImg
                             top
-                            src={order.imageURL || "/image-not-found.png"}
+                            src={order.imageURL ? `http://localhost:5000${order.imageURL}` : "/image-not-found.png"}
                             alt={`${order.vinylType} order`}
                             onError={(e) => {
                                 e.currentTarget.src = "/image-not-found.png";

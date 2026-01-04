@@ -201,21 +201,19 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
 
             if (request.Image != null && request.Image.Length > 0)
             {
-                string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "client", "public", "uploads");
+                string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                Directory.CreateDirectory(uploadsFolder);
 
-                if (!Directory.Exists(uploadsFolder))
-                {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
+                string fileName = Path.GetFileName(request.Image.FileName)
+                    .Replace(" ", "_")
+                    .Replace(",", "");
 
-                string filePath = Path.Combine(uploadsFolder, request.Image.FileName);
+                string filePath = Path.Combine(uploadsFolder, fileName);
 
-                using (FileStream stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await request.Image.CopyToAsync(stream);
-                }
+                using FileStream stream = new FileStream(filePath, FileMode.Create);
+                await request.Image.CopyToAsync(stream);
 
-                newOrder.ImageURL = $"/uploads/{request.Image.FileName}";
+                newOrder.ImageURL = $"/uploads/{fileName}";
             }
             else if (!string.IsNullOrEmpty(request.ImageURL))
             {
@@ -308,21 +306,19 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
 
         if (request.Image != null && request.Image.Length > 0)
         {
-            string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "client", "public", "uploads");
+            string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+            Directory.CreateDirectory(uploadsFolder);
 
-            if (!Directory.Exists(uploadsFolder))
-            {
-                Directory.CreateDirectory(uploadsFolder);
-            }
+            string fileName = Path.GetFileName(request.Image.FileName)
+                .Replace(" ", "_")
+                .Replace(",", "");
 
-            string filePath = Path.Combine(uploadsFolder, request.Image.FileName);
+            string filePath = Path.Combine(uploadsFolder, fileName);
 
-            using (FileStream stream = new FileStream(filePath, FileMode.Create))
-            {
-                await request.Image.CopyToAsync(stream);
-            }
+            using FileStream stream = new FileStream(filePath, FileMode.Create);
+            await request.Image.CopyToAsync(stream);
 
-            existingOrder.ImageURL = $"/uploads/{request.Image.FileName}";
+            existingOrder.ImageURL = $"/uploads/{fileName}";
         }
         else if (!string.IsNullOrEmpty(request.ImageURL))
         {
@@ -352,11 +348,15 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
             // Optionally delete the uploaded image from disk if it exists
             if (!string.IsNullOrEmpty(order.ImageURL))
             {
+                string appDataRoot = Environment.GetFolderPath(
+    Environment.SpecialFolder.ApplicationData
+);
+
                 string imagePath = Path.Combine(
                     Directory.GetCurrentDirectory(),
-                    "client",
-                    "public",
-                    order.ImageURL.TrimStart('/')
+                    "wwwroot",
+                     "uploads",
+                    Path.GetFileName(order.ImageURL)
                 );
 
                 if (System.IO.File.Exists(imagePath))
@@ -379,21 +379,21 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
     [HttpGet("summary")]
     public async Task<IActionResult> GetSummary()
     {
-         SummaryDTO? summary = await _dbContext.OrderForms
-        .GroupBy(o => 1)
-        .Select(g => new SummaryDTO
-        {
-            TotalHours = g.Sum(o => o.HoursLogged),
-            AverageRating = g.Average(o => (double)o.Rating),
-            FulfilledRevenue = g.Where(o => o.Fulfilled).Sum(o => o.Price),
-            FirstProjectCreated = g.Min(o => (DateTime?)o.CreatedOn),
-            MostRecentActivity = g.Max(o => o.UpdatedOn ?? o.CreatedOn),
-            TotalOrders = g.Count(),
-            FulfilledOrders = g.Count(o => o.Fulfilled),
-            UnfulfilledOrders = g.Count(o => !o.Fulfilled)
-        })
-        .FirstOrDefaultAsync();
+        SummaryDTO? summary = await _dbContext.OrderForms
+       .GroupBy(o => 1)
+       .Select(g => new SummaryDTO
+       {
+           TotalHours = g.Sum(o => o.HoursLogged),
+           AverageRating = g.Average(o => (double)o.Rating),
+           FulfilledRevenue = g.Where(o => o.Fulfilled).Sum(o => o.Price),
+           FirstProjectCreated = g.Min(o => (DateTime?)o.CreatedOn),
+           MostRecentActivity = g.Max(o => o.UpdatedOn ?? o.CreatedOn),
+           TotalOrders = g.Count(),
+           FulfilledOrders = g.Count(o => o.Fulfilled),
+           UnfulfilledOrders = g.Count(o => !o.Fulfilled)
+       })
+       .FirstOrDefaultAsync();
 
-    return Ok(summary ?? new SummaryDTO());
-}
+        return Ok(summary ?? new SummaryDTO());
+    }
 }
