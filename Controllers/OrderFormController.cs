@@ -201,7 +201,10 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
 
             if (request.Image != null && request.Image.Length > 0)
             {
-                string uploadsFolder = Path.Combine(AppContext.BaseDirectory, "wwwroot", "uploads");
+                string uploadsFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "ClumsyApparel",
+                "uploads");
+
                 Directory.CreateDirectory(uploadsFolder);
 
                 string fileName = Path.GetFileName(request.Image.FileName)
@@ -306,7 +309,9 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
 
         if (request.Image != null && request.Image.Length > 0)
         {
-            string uploadsFolder = Path.Combine(AppContext.BaseDirectory, "wwwroot", "uploads");
+            string uploadsFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "ClumsyApparel",
+                "uploads");
             Directory.CreateDirectory(uploadsFolder);
 
             string fileName = Path.GetFileName(request.Image.FileName)
@@ -353,9 +358,9 @@ public class OrderFormController(clumsyapparelDbContext context) : ControllerBas
 );
 
                 string imagePath = Path.Combine(
-                    AppContext.BaseDirectory,
-                    "wwwroot",
-                     "uploads",
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "ClumsyApparel",
+                    "uploads",
                     Path.GetFileName(order.ImageURL)
                 );
 

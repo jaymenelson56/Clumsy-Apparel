@@ -26,6 +26,10 @@ Make sure the following are installed on your machine:
 - [.NET 8 SDK](https://dotnet.microsoft.com/download)
 - [Node.js & npm](https://nodejs.org/)
 
+**For running the installer:**
+- Nothing required - installer is fully self-contained
+
+
 
 ---
 
@@ -39,7 +43,7 @@ Make sure the following are installed on your machine:
 2. **Configure database:**
 ```bash
    dotnet user-secrets init
-   dotnet user-secrets set clumsyapparelDbConnectionString "Data Source=clumsyapparel.db"
+   dotnet user-secrets set clumsyapparelDbConnectionString "Data Source=%LOCALAPPDATA%\\ClumsyApparel\\clumsyapparel.db"
 ```
 
 3. **Apply migrations:**
@@ -78,7 +82,7 @@ Make sure the following are installed on your machine:
 1. **Ensure connection string in appsettings.json:**
 ```json
    {
-     "clumsyapparelDbConnectionString": "Data Source=clumsyapparel.db"
+     "clumsyapparelDbConnectionString": "Data Source=%LOCALAPPDATA%\\ClumsyApparel\\clumsyapparel.db"
    }
 ```
 
@@ -87,13 +91,12 @@ Make sure the following are installed on your machine:
    cd client
    npm run dist:win
 ```
-   This automatically builds backend, frontend, and packages everything.
+   This automatically builds backend, frontend, and packages everything automatically.
 
 3. **Installer location:**
 ```
-   dist/Clumsy Apparel Setup 0.1.0.exe
+   "./dist/Clumsy Apparel Setup 0.1.0.exe"
 ```
-   You might have to put this block in quotes.
 
 ---
 ## Using the Application
@@ -110,6 +113,23 @@ Make sure the following are installed on your machine:
 **Accessing hidden app:**
 - Click the tray icon to show/hide the window
 - Or right-click tray icon → **Show App**
+
+---
+
+## Data Storage
+
+**Database location:**
+- `C:\Users\[YourName]\AppData\Local\ClumsyApparel\clumsyapparel.db`
+
+**Uploaded images:**
+- `C:\Users\[YourName]\AppData\Local\ClumsyApparel\uploads\`
+
+**Important:** All data persists across app updates and reinstalls. The database and uploads are automatically created on first run.
+
+**To reset database (fresh start):**
+1. Close the app completely (right-click tray → Quit)
+2. Delete the `ClumsyApparel` folder from `C:\Users\[YourName]\AppData\Local\`
+3. Restart the app - fresh database will be created
 
 ---
 

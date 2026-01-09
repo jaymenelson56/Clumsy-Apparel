@@ -18,9 +18,16 @@ builder.Services.AddControllers().AddJsonOptions(opts =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var connectionString = Environment.ExpandEnvironmentVariables(
+    builder.Configuration["clumsyapparelDbConnectionString"] 
+    ?? $"Data Source={Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ClumsyApparel", "clumsyapparel.db")}"
+);
+
+var dbPath = connectionString.Replace("Data Source=", "");
+Directory.CreateDirectory(Path.GetDirectoryName(dbPath)!);
+
 builder.Services.AddDbContext<clumsyapparelDbContext>(options =>
-    options.UseSqlite(builder.Configuration["clumsyapparelDbConnectionString"] 
-        ?? $"Data Source={Path.Combine(AppContext.BaseDirectory, "clumsyapparel.db")}")
+    options.UseSqlite(connectionString)
 );
 
 builder.Services.AddCors(options =>
@@ -46,7 +53,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowFrontend");
 
-var uploadsPath = Path.Combine(app.Environment.ContentRootPath, "wwwroot", "uploads");
+var uploadsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+"CLumsyApparel",
+"uploads");
 Directory.CreateDirectory(uploadsPath);
 
 app.UseDefaultFiles();
@@ -59,6 +68,11 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = ""
 });
 
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsPath),
+    RequestPath = "/uploads"
+});
 
 app.MapControllers();
 

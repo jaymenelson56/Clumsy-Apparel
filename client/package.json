@@ -18,7 +18,7 @@
     "prod": "npm run build && npm run start",
     "dist": "electron-builder",
     "build:dotnet": "cd .. && dotnet publish -c Release -r win-x64 --self-contained && cd client",
-    "dist:win": "npm run build:dotnet && next build && npm run build:backend && electron-builder --win"
+    "dist:win": "next build && npm run build:backend && npm run build:dotnet && electron-builder --win"
   },
   "dependencies": {
     "bootstrap": "^5.3.7",
