@@ -18,5 +18,11 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Remove="client\dist\**" />
+    <Compile Remove="client\dist\**" />
+    <EmbeddedResource Remove="client\dist\**" />
+    <None Remove="client\dist\**" />
+  </ItemGroup>
 
 </Project>

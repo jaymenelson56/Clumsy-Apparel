@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, Tray, nativeTheme } = require('electron')
+const { app, BrowserWindow, Menu, Tray, nativeTheme, dialog} = require('electron')
 const path = require('path')
 const { spawn } = require('child_process');
 const http = require('http');
@@ -45,15 +45,15 @@ function startFrontend() {
     cwd: __dirname,
     shell: true,
   });
-  
+
   frontendProcess.stdout.on('data', (data) => {
     console.log(`[frontend]: ${data.toString()}`);
   });
-  
+
   frontendProcess.stderr.on('data', (data) => {
     console.error(`[frontend error]: ${data.toString()}`);
   });
-  
+
   frontendProcess.on('close', (code) => {
     console.log(`🛑 Frontend exited with code ${code}`);
     frontendProcess = null;
@@ -83,6 +83,14 @@ function startBackend() {
   backendProcess.on('close', (code) => {
     console.log(`🛑 Backend exited with code ${code}`);
     backendProcess = null;
+
+    if (code !== 0 && code !== null) {
+      dialog.showErrorBox(
+        'Application Error',
+        `The backend service stopped unexpectedly (code ${code}).\n\nPlease restart the application. If the problem persists, contact support.`
+      );
+      app.quit();
+    }
   });
 }
 
@@ -243,6 +251,17 @@ app.whenReady().then(async () => {
     createWindow();
   } catch (err) {
     console.error(err);
+
+    dialog.showErrorBox(
+      'Startup Failed',
+      'The application failed to start.\n\n' +
+      'Error: ' + err.message + '\n\n' +
+      'Please try:\n' +
+      '1. Restarting the application\n' +
+      '2. Checking if another instance is running\n' +
+      '3. Contacting support if the issue persists'
+    );
+
     app.quit();
   }
 
@@ -276,4 +295,20 @@ app.on('before-quit', async (e) => {
 process.on('SIGINT', async () => {
   await stopProcesses();
   setTimeout(() => process.exit(), 500);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught exception:', error);
+  dialog.showErrorBox(
+    'Unexpected Error',
+    'An unexpected error occurred:\n\n' + error.message
+  );
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled rejection:', reason);
+  dialog.showErrorBox(
+    'Unexpected Error',
+    'An unexpected error occurred:\n\n' + reason
+  );
 });
