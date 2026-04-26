@@ -151,3 +151,5 @@ Make sure the following are installed on your machine:
 
 The app uses SQLite with a single file database (`clumsyapparel.db`). Database is automatically created and migrated on first run. No manual setup required for packaged app.
 
+> ⚠️ **Admin privileges required:** Run your terminal as Administrator before running `npm run dist:win`. 
+> electron-builder needs elevated permissions to sign and edit the executable.
