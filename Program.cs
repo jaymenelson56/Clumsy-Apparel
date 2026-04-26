@@ -54,7 +54,7 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowFrontend");
 
 var uploadsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-"CLumsyApparel",
+"ClumsyApparel",
 "uploads");
 Directory.CreateDirectory(uploadsPath);
 

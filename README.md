@@ -97,7 +97,8 @@ Make sure the following are installed on your machine:
 ```
    "./dist/Clumsy Apparel Setup 0.1.0.exe"
 ```
-
+> ⚠️ **Admin privileges required:** Run your terminal as Administrator before running `npm run dist:win`. 
+> electron-builder needs elevated permissions to sign and edit the executable.
 ---
 ## Using the Application
 
@@ -114,6 +115,20 @@ Make sure the following are installed on your machine:
 - Click the tray icon to show/hide the window
 - Or right-click tray icon → **Show App**
 
+---
+## Troubleshooting
+
+**App shows old data or blank screens after update:**
+
+The app may be using cached files. Clear Electron's cache:
+
+1. Close app completely (right-click tray → Quit)
+2. Delete these folders:
+   - `C:\Users\[YourName]\AppData\Roaming\Clumsy Apparel`
+   - `C:\Users\[YourName]\AppData\Local\Clumsy Apparel\Cache`
+3. Restart the app
+
+**Note:** This only clears cache - your database and uploads are safe.
 ---
 
 ## Data Storage
@@ -151,5 +166,3 @@ Make sure the following are installed on your machine:
 
 The app uses SQLite with a single file database (`clumsyapparel.db`). Database is automatically created and migrated on first run. No manual setup required for packaged app.
 
-> ⚠️ **Admin privileges required:** Run your terminal as Administrator before running `npm run dist:win`. 
-> electron-builder needs elevated permissions to sign and edit the executable.
