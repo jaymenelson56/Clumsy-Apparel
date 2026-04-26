@@ -155,7 +155,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
-    icon: path.join(__dirname, 'assets', 'logo.png'),
+    icon: path.join(__dirname, 'assets', 'icon.ico'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
@@ -167,7 +167,7 @@ function createWindow() {
 
   mainWindow.loadURL(isDev ? "http://localhost:3000" : "http://localhost:5000");
 
-  tray = new Tray(path.join(__dirname, 'assets', 'logo.png'));
+  tray = new Tray(path.join(__dirname, 'assets', 'icon.ico'));
   tray.setToolTip('Clumsy Apparel');
   tray.setContextMenu(Menu.buildFromTemplate([
     { label: 'Show App', click: () => mainWindow.show() },
