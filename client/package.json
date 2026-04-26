@@ -1,7 +1,7 @@
 {
   "name": "client",
   "version": "0.1.0",
-  "author": "Your Name",
+  "author": "Jayme Menchaca-Higgins",
   "description": "Desktop app for managing apparel orders",
   "license": "MIT",
   "private": true,
@@ -42,6 +42,7 @@
   "build": {
     "appId": "com.clumsyapparel.desktop",
     "productName": "Clumsy Apparel",
+    "icon": "assets/icon.ico",
     "asar": true,
     "directories": {
       "buildResources": "assets",
@@ -62,8 +63,9 @@
       }
     ],
     "win": {
+      "icon": "assets/icon.ico",
       "target": "nsis",
-      "signAndEditExecutable": false
+      "signAndEditExecutable": true
     }
   }
 }
